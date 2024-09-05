@@ -8,4 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class Room {
+    private Long roomId;
+    private String roomName;
+    private RoomType roomType;
+    private double price;
 }

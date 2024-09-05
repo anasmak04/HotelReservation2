@@ -14,5 +14,6 @@ public class Reservation {
     private LocalDate startDate;
     private LocalDate endDate;
     private Room room;
+    private Client client;
     private ReservationStatus status;
 }
