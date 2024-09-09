@@ -29,7 +29,6 @@ public class DatabaseConnection {
             System.out.println(e.getMessage());
         }
 
-
         return connection;
     }
 }

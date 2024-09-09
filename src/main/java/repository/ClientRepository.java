@@ -4,8 +4,6 @@ import main.java.connection.DatabaseConnection;
 import main.java.entities.Client;
 import main.java.repository.dao.HotelDao;
 
-import javax.xml.crypto.Data;
-import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,13 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientRepository implements HotelDao<Client> {
+public class ClientRepository extends HotelDao<Client> {
 
-    private final List<Client> clients;
 
-    public ClientRepository() {
-        this.clients = new ArrayList<>();
-    }
 
 
     @Override
@@ -42,7 +36,7 @@ public class ClientRepository implements HotelDao<Client> {
 
     @Override
     public Client update(Client client) {
-        String sql = "Update clients set first_name = ?, last_name = ?, phone = ? where clientId = ?";
+        String sql = "UPDATE clients SET first_name = ?, last_name = ?, phone = ? WHERE client_id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -51,9 +45,11 @@ public class ClientRepository implements HotelDao<Client> {
             preparedStatement.setString(2, client.getLastName());
             preparedStatement.setString(3, client.getPhone());
             preparedStatement.setLong(4, client.getClientId());
+
             preparedStatement.executeUpdate();
+
         } catch (SQLException sqlException) {
-            System.out.println(sqlException.getMessage());
+            System.out.println("SQL Exception: " + sqlException.getMessage());
         }
 
         return client;
@@ -61,12 +57,14 @@ public class ClientRepository implements HotelDao<Client> {
 
     @Override
     public void delete(Long id) {
-        String sql = "DELETE FROM clients WHERE clientId = ?";
+        String sql = "DELETE FROM clients WHERE client_id = ?";
+
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)
         ) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
+
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -80,17 +78,14 @@ public class ClientRepository implements HotelDao<Client> {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
-
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                if (rs.next()) {
-                    client = new Client();
-
-                    client.setClientId(rs.getLong("client_id"));
-                    client.setFirstName(rs.getString("first_name"));
-                    client.setLastName(rs.getString("last_name"));
-                    client.setPhone(rs.getString("phone"));
+            ResultSet resultSet = preparedStatement.executeQuery();
+                client = new Client();
+                if (resultSet.next()) {
+                    client.setClientId(resultSet.getLong("client_id"));
+                    client.setFirstName(resultSet.getString("first_name"));
+                    client.setLastName(resultSet.getString("last_name"));
+                    client.setPhone(resultSet.getString("phone"));
                 }
-            }
 
         } catch (SQLException sqlException) {
             System.out.println("Error fetching client: " + sqlException.getMessage());
@@ -99,23 +94,20 @@ public class ClientRepository implements HotelDao<Client> {
         return client;
     }
 
+
     @Override
     public List<Client> findAll() {
+        List<Client> clients = new ArrayList<>();
         String sql = "SELECT * FROM clients";
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                Long clientId = rs.getLong(1);
-                String firstName = rs.getString(2);
-                String lastName = rs.getString(3);
-                String phone = rs.getString(4);
-
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
                 Client client = new Client();
-                client.setClientId(clientId);
-                client.setFirstName(firstName);
-                client.setLastName(lastName);
-                client.setPhone(phone);
+                client.setClientId(resultSet.getLong(1));
+                client.setFirstName(resultSet.getString(2));
+                client.setLastName(resultSet.getString(3));
+                client.setPhone(resultSet.getString(4));
                 clients.add(client);
             }
         } catch (SQLException sqlException) {
@@ -124,3 +116,5 @@ public class ClientRepository implements HotelDao<Client> {
         return clients;
     }
 }
+
+

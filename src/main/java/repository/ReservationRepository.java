@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReservationRepository implements HotelDao<Reservation> {
+public class ReservationRepository extends HotelDao<Reservation> {
         private final RoomService roomService;
 
     public ReservationRepository(RoomService roomService) {
@@ -129,6 +129,11 @@ public class ReservationRepository implements HotelDao<Reservation> {
             preparedStatement.setString(1, ReservationStatus.CANCELLED.name());
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
+
+            Reservation reservation = new Reservation();
+            reservation.getRoom().deleteReservation(reservation);
+            reservation.getClient().removeReservation(reservation);
+
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

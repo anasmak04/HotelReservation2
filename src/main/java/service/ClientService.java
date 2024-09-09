@@ -42,6 +42,7 @@ public class ClientService  {
         Long id = scanner.nextLong();
         System.out.print("Enter first name: ");
         String firstName = scanner.nextLine();
+        scanner.nextLine();
         System.out.print("Enter last name: ");
         String lastName = scanner.nextLine();
         System.out.print("Enter phone number: ");

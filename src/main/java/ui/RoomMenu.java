@@ -1,17 +1,26 @@
 package main.java.ui;
 
 import main.java.entities.Room;
+import main.java.service.ClientService;
+import main.java.service.ReservationService;
 import main.java.service.RoomService;
+import main.java.service.StatisticsService;
 
 import java.util.Scanner;
 
 public class RoomMenu {
 
     private final RoomService roomService;
+    private final ClientService clientService;
+    private final ReservationService reservationService;
+    private final StatisticsService statisticsService;
     private Scanner scanner;
 
-    public RoomMenu(RoomService roomService) {
+    public RoomMenu(RoomService roomService, ClientService clientService, ReservationService reservationService, StatisticsService statisticsService) {
         this.roomService = roomService;
+        this.clientService = clientService;
+        this.reservationService = reservationService;
+        this.statisticsService = statisticsService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -53,7 +62,7 @@ public class RoomMenu {
                     delete();
                     break;
                 case 6:
-                    System.exit(0);
+                    reservationMenu(reservationService,roomService,clientService,statisticsService);
                     break;
                 case 7:
                     System.exit(0);
@@ -95,6 +104,11 @@ public class RoomMenu {
     public void delete() {
         roomService.delete();
         System.out.println("Room deleted successfully.");
+    }
+
+    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService,clientService,roomService,statisticsService);
+        reservationMenu.reservationMenu();
     }
 
 }

@@ -1,16 +1,25 @@
 package main.java.ui;
 
+import main.java.service.ClientService;
 import main.java.service.ReservationService;
+import main.java.service.RoomService;
+import main.java.service.StatisticsService;
 
 import java.util.Scanner;
 
 public class ReservationMenu {
 
     private final ReservationService reservationService;
-    private final Scanner scanner;
+    private final ClientService clientService;
+    private final RoomService roomService;
+    private final StatisticsService statisticsService;
+    private  Scanner scanner;
 
-    public ReservationMenu(ReservationService reservationService) {
+    public ReservationMenu(ReservationService reservationService, ClientService clientService, RoomService roomService, StatisticsService statisticsService) {
         this.reservationService = reservationService;
+        this.clientService = clientService;
+        this.roomService = roomService;
+        this.statisticsService = statisticsService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -25,7 +34,8 @@ public class ReservationMenu {
             System.out.println("6. Deleted Reservations");
             System.out.println("7. Show Clients");
             System.out.println("8. Show Rooms");
-            System.out.println("9. Exit");
+            System.out.println("9. Reservation statistics");
+            System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -49,14 +59,17 @@ public class ReservationMenu {
                     break;
                 case 6:
                     findAllDeletedReservations();
-                    return;
+                    break;
                 case 7:
-                    System.out.println("Returning to show clients...");
-                    return;
+                    clientMenu(roomService, clientService, reservationService);
+                    break;
                 case 8:
-                    System.out.println("Returning to show rooms...");
-                    return;
+                    roomMenu(roomService, clientService, reservationService);
+                    break;
                 case 9:
+                    statisticMenu(statisticsService,reservationService, roomService,clientService);
+                    break;
+                case 10:
                     System.out.println("Exiting...");
                     System.exit(0);
                     break;
@@ -94,7 +107,7 @@ public class ReservationMenu {
                 ));
     }
 
-    public void findAllDeletedReservations(){
+    public void findAllDeletedReservations() {
         reservationService.findAllDeletedReservations()
                 .forEach(reservation -> System.out.println(
                         "Reservation ID: " + reservation.getReservationId() +
@@ -103,6 +116,23 @@ public class ReservationMenu {
                                 ", Room Name: " + (reservation.getRoom().getRoomName()) +
                                 ", Client Name: " + (reservation.getClient().getFirstName() + " " + reservation.getClient().getLastName()) +
                                 ", Status: " + reservation.getStatus()
-                ));    }
+                ));
+    }
+
+    public void clientMenu(RoomService roomService, ClientService clientService, ReservationService reservationService){
+        ClientMenu clientMenu = new ClientMenu(clientService, reservationService,roomService,statisticsService);
+        clientMenu.clientMenu();
+    }
+
+
+    public void roomMenu(RoomService roomService, ClientService clientService, ReservationService reservationService){
+        RoomMenu roomMenu = new RoomMenu(roomService, clientService, reservationService,statisticsService);
+        roomMenu.roomMenu();
+    }
+
+    public void statisticMenu(StatisticsService statisticsServicen , ReservationService reservationService , RoomService roomService, ClientService clientService){
+        StatisticsMenu statisticsMenu = new StatisticsMenu(statisticsService,reservationService, clientService,roomService );
+            statisticsMenu.statisticsMenu();
+    }
 
 }

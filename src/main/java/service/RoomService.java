@@ -1,7 +1,7 @@
 package main.java.service;
 
 
-import main.java.entities.Reservation;
+
 import main.java.entities.Room;
 import main.java.entities.RoomType;
 import main.java.exception.RoomNotFoundException;
@@ -74,7 +74,6 @@ public class RoomService {
         Long roomId = scanner.nextLong();
         scanner.nextLine();
         roomRepository.delete(roomId);
-        System.out.println("Room deleted successfully with ID: " + roomId);
     }
 
     public Boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {

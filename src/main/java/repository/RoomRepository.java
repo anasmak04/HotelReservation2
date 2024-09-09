@@ -12,12 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomRepository implements HotelDao<Room> {
+public class RoomRepository extends HotelDao<Room> {
 
-    List<Room> rooms ;
-    public RoomRepository() {
-        rooms = new ArrayList<>();
-    }
+
 
     @Override
     public Room save(Room room) {
@@ -37,13 +34,13 @@ public class RoomRepository implements HotelDao<Room> {
     @Override
     public Room update(Room room) {
         String sql = "UPDATE rooms SET room_name = ?, room_type = ?, price = ? WHERE room_id = ?";
-        try(Connection connection = DatabaseConnection.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, room.getRoomName());
             preparedStatement.setString(2, room.getRoomType().name());
             preparedStatement.setDouble(3, room.getPrice());
             preparedStatement.executeUpdate();
-        }catch (SQLException sqlException) {
+        } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
         return room;
@@ -52,11 +49,11 @@ public class RoomRepository implements HotelDao<Room> {
     @Override
     public void delete(Long id) {
         String sql = "DELETE FROM rooms WHERE room_id = ?";
-        try(Connection connection = DatabaseConnection.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setLong(1, id);
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
-        }catch (SQLException sqlException) {
+        } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
 
@@ -87,24 +84,22 @@ public class RoomRepository implements HotelDao<Room> {
 
     @Override
     public List<Room> findAll() {
+        List<Room> rooms = new ArrayList<>();
         String sql = "SELECT * FROM rooms";
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()){
-                Long id = rs.getLong("room_id");
-                String roomName = rs.getString("room_name");
-                String roomType = rs.getString("room_type");
-                RoomType roomType1 = RoomType.valueOf(roomType);
-                double price = rs.getDouble("price");
-                Room room = new Room(id,roomName,roomType1,price);
-                room.setRoomId(room.getRoomId());
-                room.setRoomName(room.getRoomName());
-                room.setRoomType(room.getRoomType());
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                Room room = new Room();
+                room.setRoomId(resultSet.getLong("room_id"));
+                room.setRoomName(resultSet.getString("room_name"));
+                String roomType = resultSet.getString("room_type");
+                room.setRoomType(RoomType.valueOf(roomType));
+                room.setPrice(resultSet.getDouble("price"));
                 rooms.add(room);
             }
-            preparedStatement.executeUpdate();
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

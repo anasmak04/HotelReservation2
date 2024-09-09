@@ -2,16 +2,25 @@ package main.java.ui;
 
 import main.java.entities.Client;
 import main.java.service.ClientService;
+import main.java.service.ReservationService;
+import main.java.service.RoomService;
+import main.java.service.StatisticsService;
 
 import java.util.Scanner;
 
 public class ClientMenu {
 
-    private final ClientService clientService;
+    private  ClientService clientService;
+    private  ReservationService reservationService;
+    private  RoomService roomService;
+    private  StatisticsService statisticsService;
     private Scanner scanner;
-
-    public ClientMenu(ClientService clientService) {
+    public ClientMenu() {}
+    public ClientMenu(ClientService clientService, ReservationService reservationService, RoomService roomService, StatisticsService statisticsService) {
         this.clientService = clientService;
+        this.reservationService = reservationService;
+        this.roomService = roomService;
+        this.statisticsService = statisticsService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -47,6 +56,10 @@ public class ClientMenu {
                     delete();
                     break;
                 case 6:
+                    reservationMenu(reservationService, roomService, clientService, statisticsService);
+                    break;
+
+                case 7:
                     System.exit(0);
                     break;
                 default:
@@ -63,9 +76,13 @@ public class ClientMenu {
 
     public void findAll() {
         clientService.findAll()
-                .forEach(client -> System.out.println("Client : " + client.getFirstName()
-                        + client.getLastName() + client.getPhone()));
+                .forEach(client -> System.out.println("Client: " +
+                        "Id: " + client.getClientId() + ", " +
+                        "First Name: " + client.getFirstName() + ", " +
+                        "Last Name: " + client.getLastName() + ", " +
+                        "Phone: " + client.getPhone()));
     }
+
 
     public void findById() {
         Client fetchedClient = clientService.findById();
@@ -80,6 +97,11 @@ public class ClientMenu {
     public void delete() {
          clientService.delete();
         System.out.println("Client deleted successfully");
+    }
+
+    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService,clientService,roomService,statisticsService);
+        reservationMenu.reservationMenu();
     }
 
 }
