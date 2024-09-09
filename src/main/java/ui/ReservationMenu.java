@@ -1,10 +1,12 @@
 package main.java.ui;
 
+import main.java.entities.Reservation;
 import main.java.service.ClientService;
 import main.java.service.ReservationService;
 import main.java.service.RoomService;
 import main.java.service.StatisticsService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ReservationMenu {
@@ -32,8 +34,8 @@ public class ReservationMenu {
             System.out.println("4. Update Reservation By Id");
             System.out.println("5. Delete Reservation By Id");
             System.out.println("6. Deleted Reservations");
-            System.out.println("7. Show Clients");
-            System.out.println("8. Show Rooms");
+            System.out.println("7. Clients Menu");
+            System.out.println("8. Rooms Menu");
             System.out.println("9. Reservation statistics");
             System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
@@ -43,7 +45,7 @@ public class ReservationMenu {
 
             switch (choice) {
                 case 1:
-                    save();
+                        save();
                     break;
                 case 2:
                     findAll();
@@ -92,20 +94,39 @@ public class ReservationMenu {
     }
 
     public void findById() {
-        reservationService.findById();
+        Reservation fetchedReservation = reservationService.findById();
+        System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
+                "Reservation ID", "Start Date", "End Date", "Room Name", "Client Name", "Status");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
+                fetchedReservation.getReservationId(),
+                fetchedReservation.getStartDate(),
+                fetchedReservation.getEndDate(),
+                fetchedReservation.getRoom().getRoomName(),
+                fetchedReservation.getClient().getFirstName() + " " + fetchedReservation.getClient().getLastName(),
+                fetchedReservation.getStatus());
+
     }
 
     public void findAll() {
-        reservationService.findAll()
-                .forEach(reservation -> System.out.println(
-                        "Reservation ID: " + reservation.getReservationId() +
-                                ", Start Date: " + reservation.getStartDate() +
-                                ", End Date: " + reservation.getEndDate() +
-                                ", Room Name: " + (reservation.getRoom().getRoomName()) +
-                                ", Client Name: " + (reservation.getClient().getFirstName() + " " + reservation.getClient().getLastName()) +
-                                ", Status: " + reservation.getStatus()
-                ));
+        List<Reservation> reservations = reservationService.findAll();
+
+
+        System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
+                "Reservation ID", "Start Date", "End Date", "Room Name", "Client Name", "Status");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+
+        reservations.forEach(reservation ->
+                System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
+                        reservation.getReservationId(),
+                        reservation.getStartDate(),
+                        reservation.getEndDate(),
+                        reservation.getRoom().getRoomName(),
+                        reservation.getClient().getFirstName() + " " + reservation.getClient().getLastName(),
+                        reservation.getStatus())
+        );
     }
+
 
     public void findAllDeletedReservations() {
         reservationService.findAllDeletedReservations()
@@ -132,7 +153,7 @@ public class ReservationMenu {
 
     public void statisticMenu(StatisticsService statisticsServicen , ReservationService reservationService , RoomService roomService, ClientService clientService){
         StatisticsMenu statisticsMenu = new StatisticsMenu(statisticsService,reservationService, clientService,roomService );
-            statisticsMenu.statisticsMenu();
+        statisticsMenu.statisticsMenu();
     }
 
 }

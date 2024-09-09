@@ -6,6 +6,7 @@ import main.java.service.ReservationService;
 import main.java.service.RoomService;
 import main.java.service.StatisticsService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ClientMenu {
@@ -75,18 +76,32 @@ public class ClientMenu {
     }
 
     public void findAll() {
-        clientService.findAll()
-                .forEach(client -> System.out.println("Client: " +
-                        "Id: " + client.getClientId() + ", " +
-                        "First Name: " + client.getFirstName() + ", " +
-                        "Last Name: " + client.getLastName() + ", " +
-                        "Phone: " + client.getPhone()));
+        List<Client> clients = clientService.findAll();
+
+        System.out.printf("%-10s %-15s %-15s %-15s%n",
+                "Client ID", "First Name", "Last Name", "Phone");
+        System.out.println("------------------------------------------------------");
+
+        clients.forEach(client ->
+                System.out.printf("%-10s %-15s %-15s %-15s%n",
+                        client.getClientId(),
+                        client.getFirstName(),
+                        client.getLastName(),
+                        client.getPhone())
+        );
     }
 
 
     public void findById() {
         Client fetchedClient = clientService.findById();
-        System.out.println("Client : " + fetchedClient.getFirstName() + fetchedClient.getLastName());
+        System.out.printf("%-10s %-15s %-15s %-15s%n",
+                "Client ID", "First Name", "Last Name", "Phone");
+        System.out.println("------------------------------------------------------");
+        System.out.printf("%-10s %-15s %-15s %-15s%n",
+                fetchedClient.getClientId(),
+                fetchedClient.getFirstName(),
+                fetchedClient.getLastName(),
+                fetchedClient.getPhone());
     }
 
     public void update() {
@@ -95,7 +110,7 @@ public class ClientMenu {
     }
 
     public void delete() {
-         clientService.delete();
+        clientService.delete();
         System.out.println("Client deleted successfully");
     }
 

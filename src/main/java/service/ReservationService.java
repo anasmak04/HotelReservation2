@@ -5,6 +5,7 @@ import main.java.entities.Reservation;
 import main.java.entities.ReservationStatus;
 import main.java.entities.Room;
 import main.java.exception.ClientNotFoundException;
+import main.java.exception.ReservationNotFoundException;
 import main.java.exception.RoomNotFoundException;
 import main.java.repository.ClientRepository;
 import main.java.repository.ReservationRepository;
@@ -66,56 +67,53 @@ public class ReservationService {
     }
 
     public Reservation update() {
-        System.out.println("Enter reservation ID to update:");
-        Long reservationId = Long.parseLong(scanner.nextLine());
+       System.out.println("Enter reservation Id to update");
+       String reservationId = scanner.nextLine();
+       Long reservationIdToLong = Long.parseLong(reservationId);
+       Reservation fetchedReservation = reservationRepository.findById(Long.parseLong(reservationId));
+       if(fetchedReservation == null) {
+           throw new ReservationNotFoundException("Reservation Not Found ! ");
+       }
 
-        Reservation existingReservation = reservationRepository.findById(reservationId);
-        if (existingReservation == null) {
-            System.out.println("Reservation not found.");
-            return null;
+       System.out.println("Enter reservation start date (yyyy/MM/dd):");
+       String startDate = scanner.nextLine();
+       LocalDate startDateParse = DateFormat.parseDate(startDate);
+       if(startDate.isEmpty() || startDateParse.isBefore(LocalDate.now())) {
+           System.out.println("Enter a valid start date (yyyy/MM/dd):");
+       }
+
+       System.out.println("Enter reservation end date (yyyy/MM/dd):");
+       String endDate = scanner.nextLine();
+       LocalDate endDateParse = DateFormat.parseDate(endDate);
+       if(endDate.isEmpty() || endDateParse.isBefore(LocalDate.now())) {
+           System.out.println("Enter a valid end date (yyyy/MM/dd):");
+       }
+
+       System.out.println("Enter reservation Room Id:");
+       Long roomIdToLong = Long.parseLong(scanner.nextLine());
+       Room fetchedRoom = null;
+       try{
+           fetchedRoom = roomRepository.findById(roomIdToLong);
+       }catch (RoomNotFoundException roomNotFoundException) {
+           System.out.println(roomNotFoundException.getMessage());
+       }
+
+        System.out.println("Enter reservation client Id:");
+        Long clientIdToLong = Long.parseLong(scanner.nextLine());
+        Client fetchedClient = null;
+        try{
+            fetchedClient = clientRepository.findById(clientIdToLong);
+        }catch (ClientNotFoundException clientNotFoundException) {
+            System.out.println(clientNotFoundException.getMessage());
         }
 
-        System.out.println("Enter new reservation start date (yyyy/MM/dd) or press Enter to keep current:");
-        String startDate = scanner.nextLine();
-        if (!startDate.isEmpty()) {
-            existingReservation.setStartDate(DateFormat.parseDate(startDate));
-        }
+        System.out.println("Enter reservation Status:");
+        String status = scanner.nextLine().toUpperCase();
+        ReservationStatus reservationStatus = ReservationStatus.valueOf(status);
 
-        System.out.println("Enter new reservation end date (yyyy/MM/dd) or press Enter to keep current:");
-        String endDate = scanner.nextLine();
-        if (!endDate.isEmpty()) {
-            existingReservation.setEndDate(DateFormat.parseDate(endDate));
-        }
+        Reservation reservation = new Reservation(reservationIdToLong,startDateParse,endDateParse,fetchedRoom,fetchedClient,reservationStatus);
 
-        System.out.println("Enter new Room Id or press Enter to keep current:");
-        String roomId = scanner.nextLine();
-        if (!roomId.isEmpty()) {
-            Long roomIdToLong = Long.parseLong(roomId);
-            try {
-                existingReservation.setRoom(roomRepository.findById(roomIdToLong));
-            } catch (RoomNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        System.out.println("Enter new Client Id or press Enter to keep current:");
-        String clientId = scanner.nextLine();
-        if (!clientId.isEmpty()) {
-            Long clientIdToLong = Long.parseLong(clientId);
-            try {
-                existingReservation.setClient(clientRepository.findById(clientIdToLong));
-            } catch (ClientNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        System.out.println("Enter new reservation status or press Enter to keep current:");
-        String status = scanner.nextLine();
-        if (!status.isEmpty()) {
-            existingReservation.setStatus(ReservationStatus.valueOf(status.toUpperCase()));
-        }
-
-        return reservationRepository.update(existingReservation);
+        return reservationRepository.update(reservation);
     }
 
     public List<Reservation> findAll() {
@@ -142,11 +140,7 @@ public class ReservationService {
         System.out.println("Enter reservation Id");
         String id = scanner.nextLine();
         Long reservationId = Long.parseLong(id);
-        Reservation reservation = reservationRepository.findById(reservationId);
-        if (reservation == null) {
-            System.out.println("Reservation not found.");
-        }
-        return reservation;
+        return reservationRepository.findById(reservationId);
     }
 
     public List<Reservation> findAllDeletedReservations() {

@@ -33,3 +33,4 @@ FOREIGN KEY (client_id)
 REFERENCES clients(client_id)
 ON DELETE CASCADE
 );
+

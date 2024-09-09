@@ -79,13 +79,13 @@ public class ClientRepository extends HotelDao<Client> {
 
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-                client = new Client();
-                if (resultSet.next()) {
-                    client.setClientId(resultSet.getLong("client_id"));
-                    client.setFirstName(resultSet.getString("first_name"));
-                    client.setLastName(resultSet.getString("last_name"));
-                    client.setPhone(resultSet.getString("phone"));
-                }
+            client = new Client();
+            if (resultSet.next()) {
+                client.setClientId(resultSet.getLong("client_id"));
+                client.setFirstName(resultSet.getString("first_name"));
+                client.setLastName(resultSet.getString("last_name"));
+                client.setPhone(resultSet.getString("phone"));
+            }
 
         } catch (SQLException sqlException) {
             System.out.println("Error fetching client: " + sqlException.getMessage());
@@ -116,5 +116,3 @@ public class ClientRepository extends HotelDao<Client> {
         return clients;
     }
 }
-
-

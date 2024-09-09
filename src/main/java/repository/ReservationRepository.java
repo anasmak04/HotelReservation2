@@ -6,6 +6,7 @@ import main.java.entities.Reservation;
 import main.java.entities.ReservationStatus;
 import main.java.entities.Room;
 import main.java.repository.dao.HotelDao;
+import main.java.service.ClientService;
 import main.java.service.RoomService;
 
 import java.sql.Connection;
@@ -17,10 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationRepository extends HotelDao<Reservation> {
-        private final RoomService roomService;
+    private final RoomService roomService;
+    private final ClientRepository clientRepository;
+    private final RoomRepository roomRepository;
 
-    public ReservationRepository(RoomService roomService) {
+    public ReservationRepository(RoomService roomService, ClientRepository clientRepository, RoomRepository roomRepository) {
         this.roomService = roomService;
+        this.clientRepository = clientRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -101,15 +106,21 @@ public class ReservationRepository extends HotelDao<Reservation> {
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 Reservation reservation = new Reservation();
                 reservation.setReservationId(resultSet.getLong("reservation_id"));
                 reservation.setStartDate(resultSet.getDate("start_date").toLocalDate());
                 reservation.setEndDate(resultSet.getDate("end_date").toLocalDate());
-                Room room = new Room(resultSet.getLong("room_id"));
-                Client client = new Client(resultSet.getLong("client_id"));
+
+                Long roomId = resultSet.getLong("room_id");
+                Long clientId = resultSet.getLong("client_id");
+
+                Room room = roomRepository.findById(roomId);
+                Client client = clientRepository.findById(clientId);
+
                 reservation.setRoom(room);
                 reservation.setClient(client);
+
                 reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));
                 reservations.add(reservation);
             }
@@ -121,6 +132,7 @@ public class ReservationRepository extends HotelDao<Reservation> {
         return reservations;
     }
 
+
     @Override
     public void delete(Long id) {
         String sql = "UPDATE reservations SET status = ? WHERE reservation_id = ?";
@@ -130,7 +142,8 @@ public class ReservationRepository extends HotelDao<Reservation> {
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
 
-            Reservation reservation = new Reservation();
+            Reservation reservation = findById(id);
+
             reservation.getRoom().deleteReservation(reservation);
             reservation.getClient().removeReservation(reservation);
 
@@ -155,8 +168,9 @@ public class ReservationRepository extends HotelDao<Reservation> {
                 reservation.setReservationId(resultSet.getLong("reservation_id"));
                 reservation.setStartDate(resultSet.getDate("start_date").toLocalDate());
                 reservation.setEndDate(resultSet.getDate("end_date").toLocalDate());
-                Room room = new Room(resultSet.getLong("room_id"));
-                Client client = new Client(resultSet.getLong("client_id"));
+                Room room = roomRepository.findById(resultSet.getLong("room_id"));
+                Client client = clientRepository.findById(resultSet.getLong("client_id"));
+
                 reservation.setRoom(room);
                 reservation.setClient(client);
                 reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));

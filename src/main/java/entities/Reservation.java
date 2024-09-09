@@ -1,8 +1,6 @@
 package main.java.entities;
 
-
 import java.time.LocalDate;
-import java.util.Date;
 
 
 public class Reservation {
@@ -12,7 +10,6 @@ public class Reservation {
     private Room room;
     private Client client;
     private ReservationStatus status;
-
 
     public Reservation(){}
 

@@ -37,9 +37,12 @@ public class RoomRepository extends HotelDao<Room> {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, room.getRoomName());
-            preparedStatement.setString(2, room.getRoomType().name());
+            RoomType statusRoom = RoomType.valueOf(room.getRoomType().name());
+            preparedStatement.setString(2, room.getRoomType().toString());
             preparedStatement.setDouble(3, room.getPrice());
+            preparedStatement.setLong(4, room.getRoomId());
             preparedStatement.executeUpdate();
+
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

@@ -13,7 +13,7 @@ public class Main {
         RoomService roomService = new RoomService(roomRepository);
         ClientRepository clientRepository = new ClientRepository();
         ClientService clientService = new ClientService(clientRepository);
-        ReservationRepository reservationRepository = new ReservationRepository(roomService);
+        ReservationRepository reservationRepository = new ReservationRepository(roomService, clientRepository,roomRepository);
         ReservationService reservationService = new ReservationService(reservationRepository ,roomRepository , clientRepository);
         StatisticsService statisticsService = new StatisticsService(reservationRepository , roomRepository);
 

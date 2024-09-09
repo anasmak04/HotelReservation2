@@ -37,13 +37,13 @@ public class StatisticsMenu {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Cancelled Reservations: " + countCancelledReservations());
+                    countCancelledReservations();
                     break;
                 case 2:
-                    System.out.println("Generated Revenue: $" + generatedRevenue());
+                    generatedRevenue();
                     break;
                 case 3:
-                    System.out.println("Occupancy Rate: " + occupancyRate() + "%");
+                    occupancyRate();
                     break;
                 case 4:
                     reservationMenu(reservationService, roomService, clientService, statisticsService);
@@ -58,16 +58,19 @@ public class StatisticsMenu {
         }
     }
 
-    private long countCancelledReservations() {
-        return statisticsService.countCancelledReservations();
+    private void countCancelledReservations() {
+        long count = statisticsService.countCancelledReservations();
+        System.out.println(count + " reservations have been cancelled.");
     }
 
-    private double generatedRevenue() {
-        return statisticsService.generatedRevenue();
+    private void generatedRevenue() {
+        double generatedRevenue = statisticsService.generatedRevenue();
+        System.out.println(generatedRevenue + " revenues have been generated.");
     }
 
-    private double occupancyRate() {
-        return statisticsService.occupancyRate();
+    private void occupancyRate() {
+         double rates = statisticsService.occupancyRate();
+        System.out.println(rates + " occupancy rates have been occupied.");
     }
 
     public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {

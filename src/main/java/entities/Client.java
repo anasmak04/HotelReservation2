@@ -10,19 +10,21 @@ public class Client {
     private String firstName;
     private String lastName;
     private String phone;
-    private List<Reservation> reservations;
-    public Client() {}
+    private List<Reservation> reservations = new ArrayList<>();
+
+    public Client() {
+    }
 
     public Client(Long clientId) {
-        this(clientId,null);
+        this(clientId, null);
     }
 
-    public Client(Long clientId , String firstName) {
-        this(clientId,firstName,null);
+    public Client(Long clientId, String firstName) {
+        this(clientId, firstName, null);
     }
 
-    public Client(Long clientId , String firstName , String lastName) {
-        this(clientId,firstName,lastName,null);
+    public Client(Long clientId, String firstName, String lastName) {
+        this(clientId, firstName, lastName, null);
     }
 
     public Client(Long clientId, String firstName, String lastName, String phone) {
@@ -30,7 +32,6 @@ public class Client {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
-        this.reservations = new ArrayList<Reservation>();
     }
 
     public Long getClientId() {
@@ -68,6 +69,7 @@ public class Client {
     public List<Reservation> getReservations() {
         return reservations;
     }
+
     public void addReservation(Reservation reservation) {
         reservations.add(reservation);
     }

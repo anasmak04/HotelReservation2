@@ -9,7 +9,7 @@ public class Room {
     private String roomName;
     private RoomType roomType;
     private double price;
-    public List<Reservation> reservations;
+    public List<Reservation> reservations = new ArrayList<>();
 
     public Room() {}
 
@@ -30,7 +30,6 @@ public class Room {
         this.roomName = roomName;
         this.roomType = roomType;
         this.price = price;
-        this.reservations = new ArrayList<Reservation>();
     }
 
 

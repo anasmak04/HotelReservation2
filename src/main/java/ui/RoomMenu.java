@@ -6,6 +6,7 @@ import main.java.service.ReservationService;
 import main.java.service.RoomService;
 import main.java.service.StatisticsService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class RoomMenu {
@@ -62,7 +63,7 @@ public class RoomMenu {
                     delete();
                     break;
                 case 6:
-                    reservationMenu(reservationService,roomService,clientService,statisticsService);
+                    reservationMenu(reservationService, roomService, clientService, statisticsService);
                     break;
                 case 7:
                     System.exit(0);
@@ -81,19 +82,32 @@ public class RoomMenu {
 
 
     public void findAll() {
-        roomService.findAll()
-                .forEach(room -> System.out.println(
-                        "Room ID: " + room.getRoomId() +
-                                ", Room Name: " + room.getRoomName() +
-                                ", Room Type: " + (room.getRoomType().name()) +
-                                ", Price: " + room.getPrice()
-                ));
+        List<Room> rooms = roomService.findAll();
+
+        System.out.printf("%-10s %-20s %-15s %-10s%n",
+                "Room ID", "Room Name", "Room Type", "Price");
+        System.out.println("-------------------------------------------------------------");
+
+        rooms.forEach(room ->
+                System.out.printf("%-10s %-20s %-15s %-10.2f%n",
+                        room.getRoomId(),
+                        room.getRoomName(),
+                        room.getRoomType().name(),
+                        room.getPrice())
+        );
     }
 
 
     public void findById() {
         Room room = roomService.findById();
-        System.out.println("Room : " + room.getRoomId() + room.getRoomName() + room.getRoomType().name() + room.getPrice());
+        System.out.printf("%-10s %-20s %-15s %-10s%n",
+                "Room ID", "Room Name", "Room Type", "Price");
+        System.out.println("-------------------------------------------------------------");
+        System.out.printf("%-10s %-20s %-15s %-10.2f%n",
+                room.getRoomId(),
+                room.getRoomName(),
+                room.getRoomType().name(),
+                room.getPrice());
     }
 
     public void update() {
@@ -107,7 +121,7 @@ public class RoomMenu {
     }
 
     public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
-        ReservationMenu reservationMenu = new ReservationMenu(reservationService,clientService,roomService,statisticsService);
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService);
         reservationMenu.reservationMenu();
     }
 

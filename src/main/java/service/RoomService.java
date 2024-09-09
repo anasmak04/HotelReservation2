@@ -78,6 +78,9 @@ public class RoomService {
 
     public Boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
         Room room = roomRepository.findById(roomId);
+        if(room.getReservations() == null || room.getReservations().isEmpty()) {
+            return true;
+        }
         return room.getReservations().stream()
                 .allMatch(reservation ->
                         (endDate.isBefore(reservation.getStartDate())
