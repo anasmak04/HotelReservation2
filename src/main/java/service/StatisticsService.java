@@ -30,7 +30,8 @@ public class StatisticsService {
 
     public double generatedRevenue() {
         return allReservations().stream()
-                .mapToDouble(reservation -> reservation.getRoom().getPrice())
+                .filter(reservation -> reservation.getStatus().name().equals("CONFIRMED"))
+                .mapToDouble(room -> room.getRoom().getPrice())
                 .sum();
     }
 
@@ -44,7 +45,7 @@ public class StatisticsService {
 //        System.out.println(totalRooms + " rooms occupied");
 //        System.out.println(reservedRooms + " available rooms");
 
-        return  (double) reservedRooms / totalRooms * 100;
+        return (double) reservedRooms / totalRooms * 100;
     }
 
 }

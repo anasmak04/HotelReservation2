@@ -70,7 +70,7 @@ public class StatisticsMenu {
 
     private void occupancyRate() {
          double rates = statisticsService.occupancyRate();
-        System.out.println(rates + " occupancy rates have been occupied.");
+        System.out.println(String.format("%.2f", rates)  + " occupancy rates have been occupied. %");
     }
 
     public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
