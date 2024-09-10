@@ -1,6 +1,7 @@
 package main.java.service;
 
 import main.java.entities.*;
+import main.java.enums.ReservationStatus;
 import main.java.exception.ClientNotFoundException;
 import main.java.exception.ReservationNotFoundException;
 import main.java.exception.RoomNotFoundException;

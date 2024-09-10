@@ -1,7 +1,7 @@
 package main.java.service;
 
 import main.java.entities.DynamicPricing;
-import main.java.entities.Season;
+import main.java.enums.Season;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

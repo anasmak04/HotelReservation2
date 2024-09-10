@@ -1,5 +1,7 @@
 package main.java.entities;
 
+import main.java.enums.ReservationStatus;
+
 import java.time.LocalDate;
 
 

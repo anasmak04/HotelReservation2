@@ -3,7 +3,7 @@ package main.java.service;
 
 
 import main.java.entities.Room;
-import main.java.entities.RoomType;
+import main.java.enums.RoomType;
 import main.java.exception.RoomNotFoundException;
 import main.java.repository.RoomRepository;
 

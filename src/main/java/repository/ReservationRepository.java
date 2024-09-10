@@ -2,6 +2,7 @@ package main.java.repository;
 
 import main.java.connection.DatabaseConnection;
 import main.java.entities.*;
+import main.java.enums.ReservationStatus;
 import main.java.exception.ReservationNotFoundException;
 import main.java.exception.RoomNotFoundException;
 import main.java.repository.dao.HotelDao;

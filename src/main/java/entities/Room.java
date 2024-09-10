@@ -1,6 +1,8 @@
 package main.java.entities;
 
 
+import main.java.enums.RoomType;
+
 import java.util.ArrayList;
 import java.util.List;
 

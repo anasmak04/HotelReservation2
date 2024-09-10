@@ -2,7 +2,7 @@ package main.java.repository;
 
 import main.java.connection.DatabaseConnection;
 import main.java.entities.Room;
-import main.java.entities.RoomType;
+import main.java.enums.RoomType;
 import main.java.exception.ReservationNotFoundException;
 import main.java.exception.RoomNotFoundException;
 import main.java.repository.dao.HotelDao;
