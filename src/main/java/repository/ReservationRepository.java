@@ -1,14 +1,11 @@
 package main.java.repository;
 
 import main.java.connection.DatabaseConnection;
-import main.java.entities.Client;
-import main.java.entities.Reservation;
-import main.java.entities.ReservationStatus;
-import main.java.entities.Room;
+import main.java.entities.*;
+import main.java.exception.ReservationNotFoundException;
+import main.java.exception.RoomNotFoundException;
 import main.java.repository.dao.HotelDao;
-import main.java.service.ClientService;
 import main.java.service.RoomService;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -28,25 +25,23 @@ public class ReservationRepository extends HotelDao<Reservation> {
         this.roomRepository = roomRepository;
     }
 
+
     @Override
-    public Reservation save(Reservation reservation) {
+    public void save(Reservation reservation) {
 
         if (reservation.getEndDate().isBefore(reservation.getStartDate())) {
             System.out.println("Error: End date cannot be before start date.");
-            return null;
         }
 
         if (reservation.getStartDate().isAfter(reservation.getEndDate())) {
             System.out.println("Error: Start date cannot be after end date.");
-            return null;
         }
 
         if (!roomService.isRoomAvailable(reservation.getRoom().getRoomId(), reservation.getStartDate(), reservation.getEndDate())) {
             System.out.println("Error: The room is already reserved for the given dates. Please choose other dates.");
-            return null;
         }
 
-        String sql = "INSERT INTO reservations (start_date, end_date, room_id, client_id, status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO reservations (start_date, end_date, room_id, client_id, status) VALUES (?, ?, ?, ?, ?::status)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
@@ -58,21 +53,26 @@ public class ReservationRepository extends HotelDao<Reservation> {
             preparedStatement.setLong(3, reservation.getRoom().getRoomId());
             preparedStatement.setLong(4, reservation.getClient().getClientId());
             preparedStatement.setString(5, reservation.getStatus().toString());
-            preparedStatement.executeUpdate();
-
             reservation.getRoom().addReservation(reservation);
             reservation.getClient().addReservation(reservation);
 
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                System.out.println("Reservation successfully added.");
+            } else {
+                throw new ReservationNotFoundException("Reservation Inserted Failed");
+            }
+
+
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println("Error saving reservation: " + e.getMessage());
         }
 
-        return reservation;
+
     }
 
     @Override
-    public Reservation update(Reservation reservation) {
+    public void update(Reservation reservation) {
         String sql = "UPDATE reservations SET start_date = ?, end_date = ?, room_id = ?, client_id = ?, status = ? WHERE reservation_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -87,14 +87,18 @@ public class ReservationRepository extends HotelDao<Reservation> {
             preparedStatement.setString(5, reservation.getStatus().toString());
             preparedStatement.setLong(6, reservation.getReservationId());
 
-            preparedStatement.executeUpdate();
+            int result = preparedStatement.executeUpdate();
+
+            if (result == 1) {
+                System.out.println("Reservation updated successfully ");
+            } else {
+                throw new ReservationNotFoundException("Reservation update failed");
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println("Error updating reservation: " + e.getMessage());
         }
 
-        return reservation;
     }
 
     @Override
@@ -140,12 +144,15 @@ public class ReservationRepository extends HotelDao<Reservation> {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, ReservationStatus.CANCELLED.name());
             preparedStatement.setLong(2, id);
-            preparedStatement.executeUpdate();
-
             Reservation reservation = findById(id);
-
             reservation.getRoom().deleteReservation(reservation);
             reservation.getClient().removeReservation(reservation);
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                System.out.println("Reservation deleted successfully.");
+            } else {
+                throw new RoomNotFoundException("Reservation delete failed");
+            }
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());

@@ -1,9 +1,6 @@
 package main.java.service;
 
-import main.java.entities.Client;
-import main.java.entities.Reservation;
-import main.java.entities.ReservationStatus;
-import main.java.entities.Room;
+import main.java.entities.*;
 import main.java.exception.ClientNotFoundException;
 import main.java.exception.ReservationNotFoundException;
 import main.java.exception.RoomNotFoundException;
@@ -29,7 +26,8 @@ public class ReservationService {
         this.scanner = new Scanner(System.in);
     }
 
-    public Reservation save() {
+    public void save() {
+
         System.out.println("Enter reservation start date (yyyy/MM/dd):");
         String startDate = scanner.nextLine();
         LocalDate startDateParse = DateFormat.parseDate(startDate);
@@ -63,10 +61,11 @@ public class ReservationService {
         }
 
         Reservation reservation = new Reservation(0L, startDateParse, endDateParse, fetchedRoom, fetchedClient, reservationStatus);
-        return reservationRepository.save(reservation);
+
+         reservationRepository.save(reservation);
     }
 
-    public Reservation update() {
+    public void update() {
        System.out.println("Enter reservation Id to update");
        String reservationId = scanner.nextLine();
        Long reservationIdToLong = Long.parseLong(reservationId);
@@ -113,7 +112,7 @@ public class ReservationService {
 
         Reservation reservation = new Reservation(reservationIdToLong,startDateParse,endDateParse,fetchedRoom,fetchedClient,reservationStatus);
 
-        return reservationRepository.update(reservation);
+        reservationRepository.update(reservation);
     }
 
     public List<Reservation> findAll() {

@@ -7,16 +7,20 @@ import main.java.service.RoomService;
 import main.java.service.StatisticsService;
 
 import java.util.List;
+
 import java.util.Scanner;
 
 public class ClientMenu {
 
-    private  ClientService clientService;
-    private  ReservationService reservationService;
-    private  RoomService roomService;
-    private  StatisticsService statisticsService;
+    private ClientService clientService;
+    private ReservationService reservationService;
+    private RoomService roomService;
+    private StatisticsService statisticsService;
     private Scanner scanner;
-    public ClientMenu() {}
+
+    public ClientMenu() {
+    }
+
     public ClientMenu(ClientService clientService, ReservationService reservationService, RoomService roomService, StatisticsService statisticsService) {
         this.clientService = clientService;
         this.reservationService = reservationService;
@@ -37,34 +41,41 @@ public class ClientMenu {
             System.out.println("6. Principal menu");
             System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
 
-            switch (choice) {
-                case 1:
-                    save();
-                    break;
-                case 2:
-                    findAll();
-                    break;
-                case 3:
-                    findById();
-                    break;
-                case 4:
-                    update();
-                    break;
-                case 5:
-                    delete();
-                    break;
-                case 6:
-                    reservationMenu(reservationService, roomService, clientService, statisticsService);
-                    break;
+            if (scanner.hasNextInt()) {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
 
-                case 7:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Invalid choice");
+                switch (choice) {
+                    case 1:
+                        save();
+                        break;
+                    case 2:
+                        findAll();
+                        break;
+                    case 3:
+                        findById();
+                        break;
+                    case 4:
+                        update();
+                        break;
+                    case 5:
+                        delete();
+                        break;
+                    case 6:
+                        reservationMenu(reservationService, roomService, clientService, statisticsService);
+                        break;
+
+                    case 7:
+                        System.exit(0);
+                        break;
+                    default:
+                        System.out.println("Invalid choice");
+                }
+
+            } else {
+                System.out.println("Invalid choice");
+                scanner.next();
             }
         }
 
@@ -105,17 +116,15 @@ public class ClientMenu {
     }
 
     public void update() {
-        Client client = clientService.update();
-        System.out.println("Client updated successfully with Id  : " + client.getClientId());
+         clientService.update();
     }
 
     public void delete() {
         clientService.delete();
-        System.out.println("Client deleted successfully");
     }
 
     public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
-        ReservationMenu reservationMenu = new ReservationMenu(reservationService,clientService,roomService,statisticsService);
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService);
         reservationMenu.reservationMenu();
     }
 

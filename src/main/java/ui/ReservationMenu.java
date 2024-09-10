@@ -15,7 +15,7 @@ public class ReservationMenu {
     private final ClientService clientService;
     private final RoomService roomService;
     private final StatisticsService statisticsService;
-    private  Scanner scanner;
+    private Scanner scanner;
 
     public ReservationMenu(ReservationService reservationService, ClientService clientService, RoomService roomService, StatisticsService statisticsService) {
         this.reservationService = reservationService;
@@ -39,44 +39,48 @@ public class ReservationMenu {
             System.out.println("9. Reservation statistics");
             System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
+            if (scanner.hasNextInt()) {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 1:
+                switch (choice) {
+                    case 1:
                         save();
-                    break;
-                case 2:
-                    findAll();
-                    break;
-                case 3:
-                    findById();
-                    break;
-                case 4:
-                    update();
-                    break;
-                case 5:
-                    delete();
-                    break;
-                case 6:
-                    findAllDeletedReservations();
-                    break;
-                case 7:
-                    clientMenu(roomService, clientService, reservationService);
-                    break;
-                case 8:
-                    roomMenu(roomService, clientService, reservationService);
-                    break;
-                case 9:
-                    statisticMenu(statisticsService,reservationService, roomService,clientService);
-                    break;
-                case 10:
-                    System.out.println("Exiting...");
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+                        break;
+                    case 2:
+                        findAll();
+                        break;
+                    case 3:
+                        findById();
+                        break;
+                    case 4:
+                        update();
+                        break;
+                    case 5:
+                        delete();
+                        break;
+                    case 6:
+                        findAllDeletedReservations();
+                        break;
+                    case 7:
+                        clientMenu(roomService, clientService, reservationService);
+                        break;
+                    case 8:
+                        roomMenu(roomService, clientService, reservationService);
+                        break;
+                    case 9:
+                        statisticMenu(statisticsService, reservationService, roomService, clientService);
+                        break;
+                    case 10:
+                        System.out.println("Exiting...");
+                        System.exit(0);
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+                scanner.next();
             }
         }
     }
@@ -140,19 +144,19 @@ public class ReservationMenu {
                 ));
     }
 
-    public void clientMenu(RoomService roomService, ClientService clientService, ReservationService reservationService){
-        ClientMenu clientMenu = new ClientMenu(clientService, reservationService,roomService,statisticsService);
+    public void clientMenu(RoomService roomService, ClientService clientService, ReservationService reservationService) {
+        ClientMenu clientMenu = new ClientMenu(clientService, reservationService, roomService, statisticsService);
         clientMenu.clientMenu();
     }
 
 
-    public void roomMenu(RoomService roomService, ClientService clientService, ReservationService reservationService){
-        RoomMenu roomMenu = new RoomMenu(roomService, clientService, reservationService,statisticsService);
+    public void roomMenu(RoomService roomService, ClientService clientService, ReservationService reservationService) {
+        RoomMenu roomMenu = new RoomMenu(roomService, clientService, reservationService, statisticsService);
         roomMenu.roomMenu();
     }
 
-    public void statisticMenu(StatisticsService statisticsServicen , ReservationService reservationService , RoomService roomService, ClientService clientService){
-        StatisticsMenu statisticsMenu = new StatisticsMenu(statisticsService,reservationService, clientService,roomService );
+    public void statisticMenu(StatisticsService statisticsServicen, ReservationService reservationService, RoomService roomService, ClientService clientService) {
+        StatisticsMenu statisticsMenu = new StatisticsMenu(statisticsService, reservationService, clientService, roomService);
         statisticsMenu.statisticsMenu();
     }
 

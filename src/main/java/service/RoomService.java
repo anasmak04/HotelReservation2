@@ -20,7 +20,7 @@ public class RoomService {
         this.roomRepository = roomRepository;
     }
 
-    public Room save() {
+    public void save() {
         System.out.println("Enter room name: ");
         String roomName = scanner.nextLine();
         System.out.println("Enter room type ('SINGLE', 'DELUXE', 'STUDIO')");
@@ -30,7 +30,7 @@ public class RoomService {
         double roomPrice = scanner.nextDouble();
         scanner.nextLine();
         Room room = new Room(null, roomName, roomType1, roomPrice);
-        return this.roomRepository.save(room);
+         this.roomRepository.save(room);
     }
 
     public List<Room> findAll() {
@@ -47,7 +47,7 @@ public class RoomService {
         throw new RoomNotFoundException("Room not found for ID: " + roomId);
     }
 
-    public Room update() {
+    public void update() {
         System.out.println("Enter room Id: ");
         Long roomId = scanner.nextLong();
         scanner.nextLine();
@@ -66,7 +66,7 @@ public class RoomService {
         double roomPrice = scanner.nextDouble();
         scanner.nextLine();
         Room updatedRoom = new Room(roomId, roomName, roomType1, roomPrice);
-        return roomRepository.update(updatedRoom);
+         roomRepository.update(updatedRoom);
     }
 
     public void delete() {

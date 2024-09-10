@@ -9,10 +9,12 @@ import java.util.List;
 public class StatisticsService {
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
+    private final RoomService roomService;
 
-    public StatisticsService(ReservationRepository reservationRepository, RoomRepository roomRepository) {
+    public StatisticsService(ReservationRepository reservationRepository, RoomRepository roomRepository, RoomService roomService) {
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
+        this.roomService = roomService;
     }
 
     public List<Reservation> allReservations() {
@@ -35,9 +37,14 @@ public class StatisticsService {
     public double occupancyRate() {
         long totalRooms = roomRepository.findAll().size();
         long reservedRooms = allReservations().stream()
+                .filter(reservation -> roomService.isRoomAvailable(reservation.getRoom().getRoomId(),
+                        reservation.getStartDate(), reservation.getEndDate()))
                 .map(Reservation::getRoom)
                 .distinct().count();
-        return (double) reservedRooms / totalRooms * 100;
+//        System.out.println(totalRooms + " rooms occupied");
+//        System.out.println(reservedRooms + " available rooms");
+
+        return  (double) reservedRooms / totalRooms * 100;
     }
 
 }

@@ -3,6 +3,8 @@ package main.java.repository;
 import main.java.connection.DatabaseConnection;
 import main.java.entities.Room;
 import main.java.entities.RoomType;
+import main.java.exception.ReservationNotFoundException;
+import main.java.exception.RoomNotFoundException;
 import main.java.repository.dao.HotelDao;
 
 import java.sql.Connection;
@@ -17,22 +19,27 @@ public class RoomRepository extends HotelDao<Room> {
 
 
     @Override
-    public Room save(Room room) {
+    public void save(Room room) {
         String sql = "INSERT INTO rooms (room_name, room_type, price) VALUES (?, ?::roomtype, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, room.getRoomName());
             preparedStatement.setString(2, room.getRoomType().name());
             preparedStatement.setDouble(3, room.getPrice());
-            preparedStatement.executeUpdate();
+            int result = preparedStatement.executeUpdate();
+            if(result == 1) {
+                System.out.println("Room added successfully");
+            }
+            else {
+                throw new ReservationNotFoundException("Reservation ");
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
-        return room;
     }
 
     @Override
-    public Room update(Room room) {
+    public void update(Room room) {
         String sql = "UPDATE rooms SET room_name = ?, room_type = ?, price = ? WHERE room_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -41,12 +48,16 @@ public class RoomRepository extends HotelDao<Room> {
             preparedStatement.setString(2, room.getRoomType().toString());
             preparedStatement.setDouble(3, room.getPrice());
             preparedStatement.setLong(4, room.getRoomId());
-            preparedStatement.executeUpdate();
-
+            int result = preparedStatement.executeUpdate();
+            if(result == 1){
+                System.out.println("Room updated successfully");
+            }
+            else{
+                throw new RoomNotFoundException("Room update failed");
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
-        return room;
     }
 
     @Override
@@ -55,7 +66,13 @@ public class RoomRepository extends HotelDao<Room> {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
+            int result  = preparedStatement.executeUpdate();
+            if(result == 1){
+                System.out.println("Room deleted successfully");
+            }
+            else{
+                throw new RoomNotFoundException("Reservation ");
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }

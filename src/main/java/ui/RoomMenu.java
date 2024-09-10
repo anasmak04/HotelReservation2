@@ -37,11 +37,8 @@ public class RoomMenu {
             System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
 
-            if (!scanner.hasNextInt()) {
-                System.out.println("Please enter a valid choice");
-                scanner.nextLine();
-                continue;
-            }
+            if (scanner.hasNextInt()) {
+
 
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -71,13 +68,17 @@ public class RoomMenu {
                 default:
                     System.out.println("Invalid choice");
             }
+            }else{
+                System.out.println("Please Enter a valid choice");
+                scanner.next();
+
+            }
         }
     }
 
 
     public void save() {
         roomService.save();
-        System.out.println("Room created successfully.");
     }
 
 

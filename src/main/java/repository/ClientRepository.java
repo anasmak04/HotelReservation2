@@ -2,6 +2,8 @@ package main.java.repository;
 
 import main.java.connection.DatabaseConnection;
 import main.java.entities.Client;
+import main.java.exception.ClientNotFoundException;
+import main.java.exception.ReservationNotFoundException;
 import main.java.repository.dao.HotelDao;
 
 import java.sql.Connection;
@@ -14,12 +16,9 @@ import java.util.List;
 public class ClientRepository extends HotelDao<Client> {
 
 
-
-
     @Override
-    public Client save(Client client) {
+    public void save(Client client) {
         String insert = "INSERT INTO clients (first_name, last_name, phone) VALUES (?, ?, ?)";
-
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(insert);
         ) {
@@ -27,15 +26,15 @@ public class ClientRepository extends HotelDao<Client> {
             preparedStatement.setString(2, client.getLastName());
             preparedStatement.setString(3, client.getPhone());
             preparedStatement.executeUpdate();
+            System.out.println("Client added successfully");
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
-
-        return client;
     }
 
+
     @Override
-    public Client update(Client client) {
+    public void update(Client client) {
         String sql = "UPDATE clients SET first_name = ?, last_name = ?, phone = ? WHERE client_id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -45,14 +44,16 @@ public class ClientRepository extends HotelDao<Client> {
             preparedStatement.setString(2, client.getLastName());
             preparedStatement.setString(3, client.getPhone());
             preparedStatement.setLong(4, client.getClientId());
-
-            preparedStatement.executeUpdate();
-
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                System.out.println("Client updated successfully");
+            } else {
+                throw new ReservationNotFoundException("Reservation update failed");
+            }
         } catch (SQLException sqlException) {
             System.out.println("SQL Exception: " + sqlException.getMessage());
         }
 
-        return client;
     }
 
     @Override
@@ -63,8 +64,12 @@ public class ClientRepository extends HotelDao<Client> {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)
         ) {
             preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-
+            int result = preparedStatement.executeUpdate();
+            if (result == 1) {
+                System.out.println("Client deleted successfully");
+            } else {
+                throw new ClientNotFoundException("Client delete failed");
+            }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
@@ -86,7 +91,7 @@ public class ClientRepository extends HotelDao<Client> {
                 client.setLastName(resultSet.getString("last_name"));
                 client.setPhone(resultSet.getString("phone"));
             }
-
+            
         } catch (SQLException sqlException) {
             System.out.println("Error fetching client: " + sqlException.getMessage());
         }
