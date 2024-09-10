@@ -12,7 +12,7 @@ public class Reservation {
     private Room room;
     private Client client;
     private ReservationStatus status;
-
+    private double totalPrice;
     public Reservation(){}
 
     public Reservation(Long reservationId, LocalDate startDate, LocalDate endDate, Room room, Client client, ReservationStatus status) {
@@ -22,6 +22,7 @@ public class Reservation {
         this.room = room;
         this.client = client;
         this.status = status;
+        this.totalPrice = 0;
     }
 
     public Long getReservationId() {
@@ -71,4 +72,13 @@ public class Reservation {
     public void setStatus(ReservationStatus status) {
         this.status = status;
     }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
 }

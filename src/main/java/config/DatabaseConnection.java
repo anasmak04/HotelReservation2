@@ -1,4 +1,4 @@
-package main.java.connection;
+package main.java.config;
 
 
 import java.sql.Connection;

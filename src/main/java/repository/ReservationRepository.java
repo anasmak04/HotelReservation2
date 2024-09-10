@@ -1,12 +1,15 @@
 package main.java.repository;
 
-import main.java.connection.DatabaseConnection;
+import main.java.config.DatabaseConnection;
 import main.java.entities.*;
 import main.java.enums.ReservationStatus;
+import main.java.exception.InvalidInputException;
 import main.java.exception.ReservationNotFoundException;
 import main.java.exception.RoomNotFoundException;
 import main.java.repository.dao.HotelDao;
 import main.java.service.RoomService;
+import main.java.validators.ReservationValidator;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -30,17 +33,7 @@ public class ReservationRepository extends HotelDao<Reservation> {
     @Override
     public void save(Reservation reservation) {
 
-        if (reservation.getEndDate().isBefore(reservation.getStartDate())) {
-            System.out.println("Error: End date cannot be before start date.");
-        }
-
-        if (reservation.getStartDate().isAfter(reservation.getEndDate())) {
-            System.out.println("Error: Start date cannot be after end date.");
-        }
-
-        if (!roomService.isRoomAvailable(reservation.getRoom().getRoomId(), reservation.getStartDate(), reservation.getEndDate())) {
-            System.out.println("Error: The room is already reserved for the given dates. Please choose other dates.");
-        }
+        ReservationValidator.validatorReservation(reservation);
 
         String sql = "INSERT INTO reservations (start_date, end_date, room_id, client_id, status) VALUES (?, ?, ?, ?, ?::status)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -68,7 +61,6 @@ public class ReservationRepository extends HotelDao<Reservation> {
         } catch (SQLException e) {
             System.out.println("Error saving reservation: " + e.getMessage());
         }
-
 
     }
 

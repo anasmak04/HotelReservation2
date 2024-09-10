@@ -1,11 +1,12 @@
 package main.java.repository;
 
-import main.java.connection.DatabaseConnection;
+import main.java.config.DatabaseConnection;
 import main.java.entities.Room;
 import main.java.enums.RoomType;
 import main.java.exception.ReservationNotFoundException;
 import main.java.exception.RoomNotFoundException;
 import main.java.repository.dao.HotelDao;
+import main.java.validators.RoomValidator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +21,7 @@ public class RoomRepository extends HotelDao<Room> {
 
     @Override
     public void save(Room room) {
+        RoomValidator.validatorRoom(room);
         String sql = "INSERT INTO rooms (room_name, room_type, price) VALUES (?, ?::roomtype, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -94,7 +96,7 @@ public class RoomRepository extends HotelDao<Room> {
                 room.setRoomId(resultSet.getLong("room_id"));
                 room.setRoomName(resultSet.getString("room_name"));
                 room.setRoomType(RoomType.valueOf(resultSet.getString("room_type")));
-                room.setPrice(resultSet.getDouble("price"));
+                room.setBasePrice(resultSet.getDouble("price"));
             }
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
@@ -117,7 +119,7 @@ public class RoomRepository extends HotelDao<Room> {
                 room.setRoomName(resultSet.getString("room_name"));
                 String roomType = resultSet.getString("room_type");
                 room.setRoomType(RoomType.valueOf(roomType));
-                room.setPrice(resultSet.getDouble("price"));
+                room.setBasePrice(resultSet.getDouble("price"));
                 rooms.add(room);
             }
         } catch (SQLException sqlException) {

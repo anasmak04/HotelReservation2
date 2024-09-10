@@ -10,7 +10,7 @@ public class Room {
     private Long roomId;
     private String roomName;
     private RoomType roomType;
-    private double price;
+    private double basePrice;
     public List<Reservation> reservations = new ArrayList<>();
 
     public Room() {}
@@ -27,11 +27,11 @@ public class Room {
         this(roomId,roomName,roomType,0);
     }
 
-    public Room(Long roomId, String roomName, RoomType roomType, double price) {
+    public Room(Long roomId, String roomName, RoomType roomType, double basePrice) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.roomType = roomType;
-        this.price = price;
+        this.basePrice = basePrice;
     }
 
 
@@ -61,11 +61,11 @@ public class Room {
     }
 
     public double getPrice() {
-        return price;
+        return basePrice;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setBasePrice(double basePrice) {
+        this.basePrice = basePrice;
     }
 
     public void addReservation(Reservation reservation) {

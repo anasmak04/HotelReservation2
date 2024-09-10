@@ -1,10 +1,11 @@
 package main.java.repository;
 
-import main.java.connection.DatabaseConnection;
+import main.java.config.DatabaseConnection;
 import main.java.entities.Client;
 import main.java.exception.ClientNotFoundException;
 import main.java.exception.ReservationNotFoundException;
 import main.java.repository.dao.HotelDao;
+import main.java.validators.ClientValidator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,7 @@ public class ClientRepository extends HotelDao<Client> {
 
     @Override
     public void save(Client client) {
+        ClientValidator.validatorClient(client);
         String insert = "INSERT INTO clients (first_name, last_name, phone) VALUES (?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(insert);
@@ -91,7 +93,7 @@ public class ClientRepository extends HotelDao<Client> {
                 client.setLastName(resultSet.getString("last_name"));
                 client.setPhone(resultSet.getString("phone"));
             }
-            
+
         } catch (SQLException sqlException) {
             System.out.println("Error fetching client: " + sqlException.getMessage());
         }

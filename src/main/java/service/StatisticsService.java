@@ -31,7 +31,7 @@ public class StatisticsService {
     public double generatedRevenue() {
         return allReservations().stream()
                 .filter(reservation -> reservation.getStatus().name().equals("CONFIRMED"))
-                .mapToDouble(room -> room.getRoom().getPrice())
+                .mapToDouble(Reservation::getTotalPrice)
                 .sum();
     }
 
