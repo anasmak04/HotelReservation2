@@ -9,6 +9,7 @@ import main.java.repository.RoomRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class RoomService {
@@ -40,9 +41,9 @@ public class RoomService {
     public Room findById() {
         System.out.println("Enter room id: ");
         Long roomId = scanner.nextLong();
-        Room room = roomRepository.findById(roomId);
-        if (room != null) {
-            return room;
+        Optional<Room> room = roomRepository.findById(roomId);
+        if(room.isPresent()) {
+            return room.get();
         }
         throw new RoomNotFoundException("Room not found for ID: " + roomId);
     }
@@ -51,7 +52,7 @@ public class RoomService {
         System.out.println("Enter room Id: ");
         Long roomId = scanner.nextLong();
         scanner.nextLine();
-        Room fetchedRoom;
+        Optional<Room> fetchedRoom;
         try{
             fetchedRoom = roomRepository.findById(roomId);
         }catch (RoomNotFoundException roomNotFoundException) {
@@ -77,15 +78,20 @@ public class RoomService {
     }
 
     public Boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
-        Room room = roomRepository.findById(roomId);
-        if(room.getReservations() == null || room.getReservations().isEmpty()) {
-            return true;
+        Optional<Room> room = roomRepository.findById(roomId);
+        if (room.isPresent()) {
+            Room room1 = room.get();
+            if (room1.getReservations() == null || room1.getReservations().isEmpty()) {
+                return true;
+            }
+            return room1.getReservations().stream()
+                    .allMatch(reservation ->
+                            endDate.isBefore(reservation.getStartDate()) ||
+                                    startDate.isAfter(reservation.getEndDate())
+                    );
         }
-        return room.getReservations().stream()
-                .allMatch(reservation ->
-                        (endDate.isBefore(reservation.getStartDate())
-                                || startDate.isAfter(reservation.getEndDate()))
-                );
+        return false;
     }
+
 
 }

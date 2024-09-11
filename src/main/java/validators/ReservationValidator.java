@@ -5,12 +5,13 @@ import main.java.exception.InvalidInputException;
 import main.java.service.RoomService;
 
 public class ReservationValidator {
-    private static RoomService roomService;
+    private RoomService roomService;
+
     public ReservationValidator(RoomService roomService) {
         this.roomService = roomService;
     }
 
-    public static void validatorReservation(Reservation reservation) {
+    public void validatorReservation(Reservation reservation) {
         if (reservation.getStartDate() == null || reservation.getEndDate() == null) {
             throw new InvalidInputException("Reservation start date and end date cannot be null.");
         }
@@ -24,6 +25,5 @@ public class ReservationValidator {
         if (!roomService.isRoomAvailable(reservation.getRoom().getRoomId(), reservation.getStartDate(), reservation.getEndDate())) {
             System.out.println("Error: The room is already reserved for the given dates. Please choose other dates.");
         }
-
     }
 }

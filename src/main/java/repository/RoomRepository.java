@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RoomRepository extends HotelDao<Room> {
 
@@ -83,7 +84,7 @@ public class RoomRepository extends HotelDao<Room> {
     }
 
     @Override
-    public Room findById(Long id) {
+    public Optional<Room> findById(Long id) {
         String sql = "SELECT * FROM rooms WHERE room_id = ?";
         Room room = null;
         try (Connection connection = DatabaseConnection.getConnection();
@@ -101,7 +102,7 @@ public class RoomRepository extends HotelDao<Room> {
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getMessage());
         }
-        return room;
+        return Optional.of(room);
     }
 
     @Override

@@ -7,6 +7,7 @@ import main.java.service.RoomService;
 import main.java.service.StatisticsService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ReservationMenu {
@@ -98,38 +99,44 @@ public class ReservationMenu {
     }
 
     public void findById() {
-        Reservation fetchedReservation = reservationService.findById();
-        System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
-                "Reservation ID", "Start Date", "End Date", "Room Name", "Client Name", "Status");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
-                fetchedReservation.getReservationId(),
-                fetchedReservation.getStartDate(),
-                fetchedReservation.getEndDate(),
-                fetchedReservation.getRoom().getRoomName(),
-                fetchedReservation.getClient().getFirstName() + " " + fetchedReservation.getClient().getLastName(),
-                fetchedReservation.getStatus());
+        Optional<Reservation> fetchedReservation = reservationService.findById();
+        if(fetchedReservation.isPresent()) {
+            Reservation reservation = fetchedReservation.get();
+            System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s %-15s%n",
+                    "Reservation ID", "Start Date", "End Date", "Room Name", "Client Name", "Status", "Total Price");
+            System.out.println("--------------------------------------------------------------------------------------------------------------------");
+            System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s %-15.2f%n",
+                    reservation.getReservationId(),
+                    reservation.getStartDate(),
+                    reservation.getEndDate(),
+                    reservation.getRoom().getRoomName(),
+                    reservation.getClient().getFirstName() + " " + reservation.getClient().getLastName(),
+                    reservation.getStatus(),
+                    reservation.getTotalPrice()
+            );
+        }
 
     }
 
     public void findAll() {
         List<Reservation> reservations = reservationService.findAll();
 
-
-        System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
-                "Reservation ID", "Start Date", "End Date", "Room Name", "Client Name", "Status");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s %-15s%n",
+                "Reservation ID", "Start Date", "End Date", "Room Name", "Client Name", "Status", "Total Price");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
 
         reservations.forEach(reservation ->
-                System.out.printf("%-15s %-15s %-15s %-20s %-25s %-10s%n",
+                System.out.printf("%-15d %-15s %-15s %-20s %-25s %-10s %-15.2f%n",
                         reservation.getReservationId(),
                         reservation.getStartDate(),
                         reservation.getEndDate(),
                         reservation.getRoom().getRoomName(),
                         reservation.getClient().getFirstName() + " " + reservation.getClient().getLastName(),
-                        reservation.getStatus())
+                        reservation.getStatus(),
+                        reservation.getTotalPrice())
         );
     }
+
 
 
     public void findAllDeletedReservations() {

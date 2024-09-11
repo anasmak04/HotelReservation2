@@ -8,6 +8,7 @@ import main.java.service.StatisticsService;
 
 import java.util.List;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ClientMenu {
@@ -104,15 +105,18 @@ public class ClientMenu {
 
 
     public void findById() {
-        Client fetchedClient = clientService.findById();
-        System.out.printf("%-10s %-15s %-15s %-15s%n",
-                "Client ID", "First Name", "Last Name", "Phone");
-        System.out.println("------------------------------------------------------");
-        System.out.printf("%-10s %-15s %-15s %-15s%n",
-                fetchedClient.getClientId(),
-                fetchedClient.getFirstName(),
-                fetchedClient.getLastName(),
-                fetchedClient.getPhone());
+        Optional<Client> fetchedClient = clientService.findById();
+        if(fetchedClient.isPresent()){
+            Client client = fetchedClient.get();
+            System.out.printf("%-10s %-15s %-15s %-15s%n",
+                    "Client ID", "First Name", "Last Name", "Phone");
+            System.out.println("------------------------------------------------------");
+            System.out.printf("%-10s %-15s %-15s %-15s%n",
+                    client.getClientId(),
+                    client.getFirstName(),
+                    client.getLastName(),
+                    client.getPhone());
+        }
     }
 
     public void update() {

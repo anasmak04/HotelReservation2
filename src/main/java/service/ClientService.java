@@ -5,6 +5,7 @@ import main.java.exception.ClientNotFoundException;
 import main.java.repository.ClientRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ClientService {
@@ -32,7 +33,7 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    public Client findById() {
+    public Optional<Client> findById() {
         try {
             System.out.println("Enter Client Id : ");
             Long id = scanner.nextLong();

@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientRepository extends HotelDao<Client> {
 
@@ -78,28 +79,28 @@ public class ClientRepository extends HotelDao<Client> {
     }
 
     @Override
-    public Client findById(Long id) {
+    public Optional<Client> findById(Long id) {
         String sql = "SELECT * FROM clients WHERE client_id = ?";
-        Client client = null;
+        Optional<Client> client = Optional.empty();
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            client = new Client();
             if (resultSet.next()) {
-                client.setClientId(resultSet.getLong("client_id"));
-                client.setFirstName(resultSet.getString("first_name"));
-                client.setLastName(resultSet.getString("last_name"));
-                client.setPhone(resultSet.getString("phone"));
+                Client foundClient = new Client();
+                foundClient.setClientId(resultSet.getLong("client_id"));
+                foundClient.setFirstName(resultSet.getString("first_name"));
+                foundClient.setLastName(resultSet.getString("last_name"));
+                foundClient.setPhone(resultSet.getString("phone"));
+                client = Optional.of(foundClient);
             }
-
         } catch (SQLException sqlException) {
             System.out.println("Error fetching client: " + sqlException.getMessage());
         }
-
         return client;
     }
+
 
 
     @Override

@@ -10,8 +10,10 @@ import main.java.repository.ReservationRepository;
 import main.java.repository.RoomRepository;
 import main.java.utils.DateFormat;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ReservationService {
@@ -44,10 +46,10 @@ public class ReservationService {
         Long clientIdToLong = Long.parseLong(scanner.nextLine());
 
         System.out.println("Enter reservation Status:");
-        ReservationStatus reservationStatus = ReservationStatus.valueOf(scanner.nextLine().toUpperCase()); // Assuming ReservationStatus is an enum
+        ReservationStatus reservationStatus = ReservationStatus.valueOf(scanner.nextLine().toUpperCase());
 
-        Room fetchedRoom = null;
-        Client fetchedClient = null;
+        Optional<Room> fetchedRoom = null;
+        Optional<Client> fetchedClient = null;
 
         try {
             fetchedRoom = roomRepository.findById(roomIdToLong);
@@ -61,49 +63,49 @@ public class ReservationService {
             System.out.println(clientNotFoundException.getMessage());
         }
 
-        Reservation reservation = new Reservation(0L, startDateParse, endDateParse, fetchedRoom, fetchedClient, reservationStatus);
+        Reservation reservation = new Reservation(0L, startDateParse, endDateParse, fetchedRoom.get(), fetchedClient.get(), reservationStatus);
 
-         reservationRepository.save(reservation);
+        reservationRepository.save(reservation);
     }
 
     public void update() {
-       System.out.println("Enter reservation Id to update");
-       String reservationId = scanner.nextLine();
-       Long reservationIdToLong = Long.parseLong(reservationId);
-       Reservation fetchedReservation = reservationRepository.findById(Long.parseLong(reservationId));
-       if(fetchedReservation == null) {
-           throw new ReservationNotFoundException("Reservation Not Found ! ");
-       }
+        System.out.println("Enter reservation Id to update");
+        String reservationId = scanner.nextLine();
+        Long reservationIdToLong = Long.parseLong(reservationId);
+        Optional<Reservation> fetchedReservation = reservationRepository.findById(Long.parseLong(reservationId));
+        if (fetchedReservation.isPresent()) {
+            throw new ReservationNotFoundException("Reservation Not Found ! ");
+        }
 
-       System.out.println("Enter reservation start date (yyyy/MM/dd):");
-       String startDate = scanner.nextLine();
-       LocalDate startDateParse = DateFormat.parseDate(startDate);
-       if(startDate.isEmpty() || startDateParse.isBefore(LocalDate.now())) {
-           System.out.println("Enter a valid start date (yyyy/MM/dd):");
-       }
+        System.out.println("Enter reservation start date (yyyy/MM/dd):");
+        String startDate = scanner.nextLine();
+        LocalDate startDateParse = DateFormat.parseDate(startDate);
+        if (startDate.isEmpty() || startDateParse.isBefore(LocalDate.now())) {
+            System.out.println("Enter a valid start date (yyyy/MM/dd):");
+        }
 
-       System.out.println("Enter reservation end date (yyyy/MM/dd):");
-       String endDate = scanner.nextLine();
-       LocalDate endDateParse = DateFormat.parseDate(endDate);
-       if(endDate.isEmpty() || endDateParse.isBefore(LocalDate.now())) {
-           System.out.println("Enter a valid end date (yyyy/MM/dd):");
-       }
+        System.out.println("Enter reservation end date (yyyy/MM/dd):");
+        String endDate = scanner.nextLine();
+        LocalDate endDateParse = DateFormat.parseDate(endDate);
+        if (endDate.isEmpty() || endDateParse.isBefore(LocalDate.now())) {
+            System.out.println("Enter a valid end date (yyyy/MM/dd):");
+        }
 
-       System.out.println("Enter reservation Room Id:");
-       Long roomIdToLong = Long.parseLong(scanner.nextLine());
-       Room fetchedRoom = null;
-       try{
-           fetchedRoom = roomRepository.findById(roomIdToLong);
-       }catch (RoomNotFoundException roomNotFoundException) {
-           System.out.println(roomNotFoundException.getMessage());
-       }
+        System.out.println("Enter reservation Room Id:");
+        Long roomIdToLong = Long.parseLong(scanner.nextLine());
+        Optional<Room> fetchedRoom = null;
+        try {
+            fetchedRoom = roomRepository.findById(roomIdToLong);
+        } catch (RoomNotFoundException roomNotFoundException) {
+            System.out.println(roomNotFoundException.getMessage());
+        }
 
         System.out.println("Enter reservation client Id:");
         Long clientIdToLong = Long.parseLong(scanner.nextLine());
-        Client fetchedClient = null;
-        try{
+        Optional<Client> fetchedClient = null;
+        try {
             fetchedClient = clientRepository.findById(clientIdToLong);
-        }catch (ClientNotFoundException clientNotFoundException) {
+        } catch (ClientNotFoundException clientNotFoundException) {
             System.out.println(clientNotFoundException.getMessage());
         }
 
@@ -111,7 +113,7 @@ public class ReservationService {
         String status = scanner.nextLine().toUpperCase();
         ReservationStatus reservationStatus = ReservationStatus.valueOf(status);
 
-        Reservation reservation = new Reservation(reservationIdToLong,startDateParse,endDateParse,fetchedRoom,fetchedClient,reservationStatus);
+        Reservation reservation = new Reservation(reservationIdToLong, startDateParse, endDateParse, fetchedRoom.get(), fetchedClient.get(), reservationStatus);
 
         reservationRepository.update(reservation);
     }
@@ -126,8 +128,8 @@ public class ReservationService {
         System.out.println("Enter the reservation ID to delete:");
         Long reservationId = Long.parseLong(scanner.nextLine());
 
-        Reservation reservation = reservationRepository.findById(reservationId);
-        if (reservation == null) {
+        Optional<Reservation> reservation = reservationRepository.findById(reservationId);
+        if (reservation.isPresent()) {
             System.out.println("Reservation not found.");
             return;
         }
@@ -136,8 +138,8 @@ public class ReservationService {
         System.out.println("Reservation deleted successfully.");
     }
 
-    public Reservation findById() {
-        System.out.println("Enter reservation Id");
+    public Optional<Reservation> findById() {
+        System.out.print("Enter reservation ID: ");
         String id = scanner.nextLine();
         Long reservationId = Long.parseLong(id);
         return reservationRepository.findById(reservationId);
