@@ -18,16 +18,17 @@ public class ClientMenu {
     private RoomService roomService;
     private StatisticsService statisticsService;
     private Scanner scanner;
-
+    private DynamicPricingMenu dynamicPricingMenu;
     public ClientMenu() {
     }
 
-    public ClientMenu(ClientService clientService, ReservationService reservationService, RoomService roomService, StatisticsService statisticsService) {
+    public ClientMenu(ClientService clientService, ReservationService reservationService, RoomService roomService, StatisticsService statisticsService, DynamicPricingMenu dynamicPricingMenu) {
         this.clientService = clientService;
         this.reservationService = reservationService;
         this.roomService = roomService;
         this.statisticsService = statisticsService;
         this.scanner = new Scanner(System.in);
+        this.dynamicPricingMenu = dynamicPricingMenu;
     }
 
 
@@ -64,7 +65,7 @@ public class ClientMenu {
                         delete();
                         break;
                     case 6:
-                        reservationMenu(reservationService, roomService, clientService, statisticsService);
+                        reservationMenu(reservationService, roomService, clientService, statisticsService,dynamicPricingMenu);
                         break;
 
                     case 7:
@@ -127,8 +128,8 @@ public class ClientMenu {
         clientService.delete();
     }
 
-    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
-        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService);
+    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService, DynamicPricingMenu dynamicPricingMenu) {
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService, dynamicPricingMenu);
         reservationMenu.reservationMenu();
     }
 

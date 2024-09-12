@@ -1,13 +1,14 @@
 package main.java.ui;
 
-import main.java.entities.DynamicPricing;
 import main.java.service.*;
+import main.java.utils.DateFormat;
+
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class DynamicPricingMenu {
 
     private final DynamicPricingService dynamicPricingService;
-    private DynamicPricing dynamicPricing;
     private final Scanner scanner;
     private final ReservationService reservationService;
     private final RoomService roomService;
@@ -23,14 +24,11 @@ public class DynamicPricingMenu {
         this.statisticsService = statisticsService;
     }
 
-    public void clientMenu() {
-
+    public void PricingMenu() {
         while (true) {
-            System.out.println("1. Add price based on day of the week");
-            System.out.println("2. Add price based on season");
-            System.out.println("3. Add price based on events");
-            System.out.println("4. Main menu");
-            System.out.println("5. Exit");
+            System.out.println("1. Add Special Event : ");
+            System.out.println("2. Main menu");
+            System.out.println("3. Exit");
             System.out.print("Enter your choice: ");
 
             if (scanner.hasNextInt()) {
@@ -39,20 +37,12 @@ public class DynamicPricingMenu {
 
                 switch (choice) {
                     case 1:
+                        addSpecialEvent();
                         break;
                     case 2:
+                        reservationMenu();
                         break;
                     case 3:
-                        break;
-                    case 4:
-                        break;
-                    case 5:
-                        break;
-                    case 6:
-                        reservationMenu(reservationService, clientService, roomService, statisticsService);
-                        break;
-
-                    case 7:
                         System.exit(0);
                         break;
                     default:
@@ -64,12 +54,25 @@ public class DynamicPricingMenu {
                 scanner.next();
             }
         }
-
     }
 
+    public void addSpecialEvent() {
+        System.out.println("Enter Event Name : ");
+        String eventName = scanner.nextLine();
+        System.out.println("Enter Start Date of Event : ");
+        String startDate = scanner.nextLine();
+        LocalDate startDateParse = DateFormat.parseDate(startDate);
+        System.out.println("Enter End Date of Event : ");
+        String endDate = scanner.nextLine();
+        LocalDate eventDateParse = DateFormat.parseDate(endDate);
+        System.out.println("Enter Multiplier of event");
+        double multiplier = scanner.nextDouble();
+        dynamicPricingService.addSpecialEvent(eventName, startDateParse, eventDateParse, multiplier);
+    }
 
-    public void reservationMenu(ReservationService reservationService, ClientService clientService, RoomService roomService, StatisticsService statisticsService) {
-        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService);
+    public void reservationMenu() {
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService, this);
         reservationMenu.reservationMenu();
     }
+
 }

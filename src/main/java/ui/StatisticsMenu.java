@@ -13,12 +13,14 @@ public class StatisticsMenu {
     private final ClientService clientService;
     private final RoomService roomService;
     private final Scanner scanner;
+    private final DynamicPricingMenu dynamicPricingMenu;
 
-    public StatisticsMenu(StatisticsService statisticsService, ReservationService reservationService, ClientService clientService, RoomService roomService) {
+    public StatisticsMenu(StatisticsService statisticsService, ReservationService reservationService, ClientService clientService, RoomService roomService, DynamicPricingMenu dynamicPricingMenu) {
         this.statisticsService = statisticsService;
         this.reservationService = reservationService;
         this.clientService = clientService;
         this.roomService = roomService;
+        this.dynamicPricingMenu = dynamicPricingMenu;
         this.scanner = new Scanner(System.in);
     }
 
@@ -46,7 +48,7 @@ public class StatisticsMenu {
                     occupancyRate();
                     break;
                 case 4:
-                    reservationMenu(reservationService, roomService, clientService, statisticsService);
+                    reservationMenu(reservationService, roomService, clientService, statisticsService,dynamicPricingMenu);
                     break;
                 case 5:
                     System.out.println("Exiting...");
@@ -73,8 +75,8 @@ public class StatisticsMenu {
         System.out.println(String.format("%.2f", rates)  + " occupancy rates have been occupied. %");
     }
 
-    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
-        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService);
+    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService, DynamicPricingMenu dynamicPricingMenu) {
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService,dynamicPricingMenu);
         reservationMenu.reservationMenu();
     }
 }

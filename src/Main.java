@@ -3,6 +3,7 @@ import main.java.repository.ClientRepository;
 import main.java.repository.ReservationRepository;
 import main.java.repository.RoomRepository;
 import main.java.service.*;
+import main.java.ui.DynamicPricingMenu;
 import main.java.ui.ReservationMenu;
 import main.java.validators.ReservationValidator;
 
@@ -20,7 +21,8 @@ public class Main {
         ReservationRepository reservationRepository = new ReservationRepository(roomService, clientRepository, roomRepository, dynamicPricingService, reservationValidator);
         ReservationService reservationService = new ReservationService(reservationRepository, roomRepository, clientRepository);
         StatisticsService statisticsService = new StatisticsService(reservationRepository, roomRepository, roomService);
-        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService);
+        DynamicPricingMenu dynamicPricingMenu = new DynamicPricingMenu(dynamicPricingService,reservationService, clientService,roomService,statisticsService);
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService, dynamicPricingMenu);
         reservationMenu.reservationMenu();
 
     }

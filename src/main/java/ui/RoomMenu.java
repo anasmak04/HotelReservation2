@@ -16,13 +16,14 @@ public class RoomMenu {
     private final ReservationService reservationService;
     private final StatisticsService statisticsService;
     private Scanner scanner;
-
-    public RoomMenu(RoomService roomService, ClientService clientService, ReservationService reservationService, StatisticsService statisticsService) {
+    private DynamicPricingMenu dynamicPricingMenu;
+    public RoomMenu(RoomService roomService, ClientService clientService, ReservationService reservationService, StatisticsService statisticsService, DynamicPricingMenu dynamicPricingMenu) {
         this.roomService = roomService;
         this.clientService = clientService;
         this.reservationService = reservationService;
         this.statisticsService = statisticsService;
         this.scanner = new Scanner(System.in);
+        this.dynamicPricingMenu = dynamicPricingMenu;
     }
 
 
@@ -60,7 +61,7 @@ public class RoomMenu {
                     delete();
                     break;
                 case 6:
-                    reservationMenu(reservationService, roomService, clientService, statisticsService);
+                    reservationMenu(reservationService, roomService, clientService, statisticsService,dynamicPricingMenu);
                     break;
                 case 7:
                     System.exit(0);
@@ -121,8 +122,8 @@ public class RoomMenu {
         System.out.println("Room deleted successfully.");
     }
 
-    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService) {
-        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService);
+    public void reservationMenu(ReservationService reservationService, RoomService roomService, ClientService clientService, StatisticsService statisticsService, DynamicPricingMenu dynamicPricingMenu) {
+        ReservationMenu reservationMenu = new ReservationMenu(reservationService, clientService, roomService, statisticsService, dynamicPricingMenu);
         reservationMenu.reservationMenu();
     }
 
