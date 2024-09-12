@@ -1,13 +1,14 @@
 package main.java.service;
 
 import main.java.entities.DynamicPricing;
+import main.java.entities.Event;
 import main.java.entities.Reservation;
 import main.java.entities.Room;
 import main.java.enums.Season;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Map;
+
 
 public class DynamicPricingService {
 
@@ -21,64 +22,66 @@ public class DynamicPricingService {
         LocalDate startDate = reservation.getStartDate();
         LocalDate endDate = reservation.getEndDate();
         Room room = reservation.getRoom();
-        double basePricePerNight = room.getPrice();
+        double basePrice = room.getPrice();
+
         long totalNights = startDate.datesUntil(endDate).count();
+        double totalPrice = 0.0;
 
-        long weekendCount = countWeekends(startDate, endDate);
-        long weekdayCount = totalNights - weekendCount;
-        long eventCount = countEventDays(startDate, endDate);
+        for (int i = 0; i < totalNights; i++) {
+            LocalDate currentDate = startDate.plusDays(i);
+            double dailyPrice = basePrice;
+
+            if (isWeekend(currentDate)) {
+                dailyPrice *= dynamicPricing.getDayOfWeekRates().getOrDefault("WEEKEND", 0.0);
+            } else {
+                dailyPrice *= dynamicPricing.getDayOfWeekRates().getOrDefault("WEEKDAY", 0.0);
+            }
 
 
+            dailyPrice *= getSeasonMultiplier(currentDate);
+            dailyPrice *= getEventMultiplier(currentDate);
 
-        double seasonMultiplier = getSeasonMultiplierForPeriod(startDate, endDate);
-        double weekdayMultiplier = dynamicPricing.getDayOfWeekRates().getOrDefault("WEEKDAY", 1.0);
-        double weekendMultiplier = dynamicPricing.getDayOfWeekRates().getOrDefault("WEEKEND", 1.0);
-        double eventMultiplier = 2.0;
+            totalPrice += dailyPrice;
+        }
 
-        double weekdayPrice = weekdayCount * basePricePerNight * seasonMultiplier * weekdayMultiplier;
-        double weekendPrice = weekendCount * basePricePerNight * seasonMultiplier * weekendMultiplier;
-        double eventPrice = eventCount * basePricePerNight * seasonMultiplier * eventMultiplier;
-
-        double totalFinalPrice = weekdayPrice + weekendPrice + eventPrice;
-
-        reservation.setTotalPrice(totalFinalPrice);
-        return totalFinalPrice;
+        reservation.setTotalPrice(totalPrice);
+        return totalPrice;
     }
 
-    private double getSeasonMultiplierForPeriod(LocalDate startDate, LocalDate endDate) {
-        String season = getSeasonForDate(startDate);
-        return dynamicPricing.getSeasonRates().getOrDefault(season, 1.0);
+    private boolean isWeekend(LocalDate date) {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        return (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY);
     }
 
-    private String getSeasonForDate(LocalDate date) {
+    private double getSeasonMultiplier(LocalDate date) {
+        Season season = getSeasonForDate(date);
+        return dynamicPricing.getSeasonRates().getOrDefault(season.name(), 1.0);
+    }
+
+    private Season getSeasonForDate(LocalDate date) {
         int month = date.getMonthValue();
         if (month >= 3 && month <= 5) {
-            return Season.SPRING.name();
+            return Season.SPRING;
         } else if (month >= 6 && month <= 8) {
-            return Season.SUMMER.name();
+            return Season.SUMMER;
         } else if (month >= 9 && month <= 11) {
-            return Season.FALL.name();
+            return Season.FALL;
         } else {
-            return Season.WINTER.name();
+            return Season.WINTER;
         }
     }
 
-    private long countWeekends(LocalDate startDate, LocalDate endDate) {
-        return startDate.datesUntil(endDate)
-                .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)
-                .count();
+    private double getEventMultiplier(LocalDate date) {
+        double multiplier = 1.0;
+        for (Event event : dynamicPricing.getEventRates().values()) {
+            if (!date.isBefore(event.getStartDate()) && !date.isAfter(event.getEndDate())) {
+                multiplier = Math.max(multiplier, event.getMultiplier());
+            }
+        }
+        return multiplier;
     }
 
-    private long countEventDays(LocalDate startDate, LocalDate endDate) {
-        Map<String, Double> events = dynamicPricing.getEventRates();
-        return startDate.datesUntil(endDate)
-                .filter(date -> events.containsKey(date.toString()))
-                .count();
+    public void addSpecialEvent(String eventName, LocalDate startDate, LocalDate endDate, double multiplier) {
+        dynamicPricing.addEventRate(eventName, startDate, endDate, multiplier);
     }
-
-    public void addSpecialEvent(String date, double multiplier) {
-        dynamicPricing.getEventRates().put(date, multiplier);
-    }
-
-
 }

@@ -2,6 +2,6 @@ package main.java.enums;
 
 public enum Events {
     HOLIDAY,
-    FESTIVAL,
+    CHRISMAS,
     NEWYEAR
 }

@@ -93,7 +93,7 @@ public class ClientRepository extends HotelDao<Client> {
                 foundClient.setFirstName(resultSet.getString("first_name"));
                 foundClient.setLastName(resultSet.getString("last_name"));
                 foundClient.setPhone(resultSet.getString("phone"));
-                client = Optional.of(foundClient);
+                client = Optional.ofNullable(foundClient);
             }
         } catch (SQLException sqlException) {
             System.out.println("Error fetching client: " + sqlException.getMessage());

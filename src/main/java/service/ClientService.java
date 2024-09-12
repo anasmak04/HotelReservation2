@@ -37,6 +37,7 @@ public class ClientService {
         try {
             System.out.println("Enter Client Id : ");
             Long id = scanner.nextLong();
+
             return clientRepository.findById(id);
         } catch (ClientNotFoundException clientNotFoundException) {
             System.out.println(clientNotFoundException.getMessage());
