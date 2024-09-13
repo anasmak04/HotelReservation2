@@ -19,11 +19,11 @@ public class ClientService {
     }
 
     public void save() {
-        System.out.println("Enter Client first name: ");
+        System.out.print("Enter Client first name : ");
         String firstName = scanner.nextLine();
-        System.out.println("Enter Client last name: ");
+        System.out.print("Enter Client last name : ");
         String lastName = scanner.nextLine();
-        System.out.println("Enter Client phone: ");
+        System.out.print("Enter Client phone : ");
         String phone = scanner.nextLine();
         Client client = new Client(null, firstName, lastName, phone);
         clientRepository.save(client);
@@ -63,7 +63,7 @@ public class ClientService {
 
 
     public void delete() {
-        System.out.println("Enter Client Id to delete : ");
+        System.out.print("Enter Client Id to delete : ");
         Long id = scanner.nextLong();
         clientRepository.delete(id);
     }

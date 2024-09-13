@@ -1,6 +1,5 @@
 package main.java.config;
 
-
 import org.flywaydb.core.Flyway;
 
 import java.sql.Connection;
@@ -14,24 +13,26 @@ public class DatabaseConnection {
     private static final String PASSWORD = System.getenv("PASSWORD");
     private static Connection connection;
 
+    private DatabaseConnection() {}
 
     public static Connection getConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("org.postgresql.Driver");
+        if (connection == null) {
+            synchronized (DatabaseConnection.class) {
+                if (connection == null) {
+                    try {
+                        Class.forName("org.postgresql.Driver");
+                        connection = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
 
-            connection = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
+                        Flyway flyway = Flyway.configure()
+                                .dataSource(DATABASE_URL, USER, PASSWORD).load();
+                        flyway.migrate();
 
-//            Flyway flyway = Flyway.configure()
-//                    .dataSource(DATABASE_URL, USER, PASSWORD)
-//                    .load();
-//            flyway.migrate();
-
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println(e.getMessage());
+                    } catch (ClassNotFoundException | SQLException e) {
+                        throw new RuntimeException("Failed to connect to the database", e);
+                    }
+                }
+            }
         }
-
         return connection;
     }
 }
-

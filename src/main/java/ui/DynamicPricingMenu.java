@@ -57,15 +57,15 @@ public class DynamicPricingMenu {
     }
 
     public void addSpecialEvent() {
-        System.out.println("Enter Event Name : ");
+        System.out.print("Enter Event Name : ");
         String eventName = scanner.nextLine();
-        System.out.println("Enter Start Date of Event : ");
+        System.out.print("Enter Start Date of Event : ");
         String startDate = scanner.nextLine();
         LocalDate startDateParse = DateFormat.parseDate(startDate);
-        System.out.println("Enter End Date of Event : ");
+        System.out.print("Enter End Date of Event : ");
         String endDate = scanner.nextLine();
         LocalDate eventDateParse = DateFormat.parseDate(endDate);
-        System.out.println("Enter Multiplier of event");
+        System.out.print("Enter Multiplier of event : ");
         double multiplier = scanner.nextDouble();
         dynamicPricingService.addSpecialEvent(eventName, startDateParse, eventDateParse, multiplier);
     }

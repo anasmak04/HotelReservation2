@@ -1,5 +1,4 @@
 package main.java.service;
-
 import main.java.entities.Reservation;
 import main.java.repository.ReservationRepository;
 import main.java.repository.RoomRepository;
@@ -37,23 +36,11 @@ public class StatisticsService {
 
 
     public double occupancyRate() {
-        long totalRooms = roomRepository.findAll().size();
-        long reservedRooms = allReservations().stream()
-                .filter(reservation -> roomService.isRoomAvailable(reservation.getRoom().getRoomId(),
-                        reservation.getStartDate(), reservation.getEndDate()))
-                .map(Reservation::getRoom)
-                .distinct().count();
-        return (double) reservedRooms / totalRooms * 100;
+        return allReservations().stream()
+//                .filter(reservation -> roomService.isRoomAvailable(reservation.getRoom().getRoomId(),
+//                        reservation.getStartDate(), reservation.getEndDate()))
+                .mapToDouble(Reservation::getTotalPrice)
+                .average()
+                .orElse(0.0);
     }
-
-
-//    public Client getMostUserReserved(){
-//        List<Reservation> reservations = allReservations();
-//        return reservations.stream()
-//                .map(Reservation::getClient)
-//                .max(Comparator.comparingInt(client -> client.getReservations().size()))
-//                .orElse(null);
-//    }
-
-
 }

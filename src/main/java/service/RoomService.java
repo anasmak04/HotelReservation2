@@ -22,12 +22,12 @@ public class RoomService {
     }
 
     public void save() {
-        System.out.println("Enter room name: ");
+        System.out.print("Enter room name : ");
         String roomName = scanner.nextLine();
-        System.out.println("Enter room type ('SINGLE', 'DELUXE', 'STUDIO')");
+        System.out.print("Enter room type ('SINGLE', 'DELUXE', 'STUDIO') : ");
         String roomType = scanner.nextLine();
         RoomType roomType1 = RoomType.valueOf(roomType);
-        System.out.println("Enter room price: ");
+        System.out.print("Enter room price : ");
         double roomPrice = scanner.nextDouble();
         scanner.nextLine();
         Room room = new Room(null, roomName, roomType1, roomPrice);
@@ -39,7 +39,7 @@ public class RoomService {
     }
 
     public Room findById() {
-        System.out.println("Enter room id: ");
+        System.out.print("Enter room id : ");
         Long roomId = scanner.nextLong();
         Optional<Room> room = roomRepository.findById(roomId);
         if(room.isPresent()) {
@@ -49,7 +49,7 @@ public class RoomService {
     }
 
     public void update() {
-        System.out.println("Enter room Id: ");
+        System.out.print("Enter room Id : ");
         Long roomId = scanner.nextLong();
         scanner.nextLine();
         Optional<Room> fetchedRoom;
@@ -58,12 +58,12 @@ public class RoomService {
         }catch (RoomNotFoundException roomNotFoundException) {
             System.out.println(roomNotFoundException.getMessage());
         }
-        System.out.println("Enter new room name: ");
+        System.out.print("Enter new room name : ");
         String roomName = scanner.nextLine();
-        System.out.println("Enter new room type ('SINGLE', 'DELUXE', 'STUDIO')");
+        System.out.print("Enter new room type ('SINGLE', 'DELUXE', 'STUDIO') : ");
         String roomType = scanner.nextLine();
         RoomType roomType1=  RoomType.valueOf(roomType);
-        System.out.println("Enter new room price: ");
+        System.out.print("Enter new room price : ");
         double roomPrice = scanner.nextDouble();
         scanner.nextLine();
         Room updatedRoom = new Room(roomId, roomName, roomType1, roomPrice);
@@ -71,7 +71,7 @@ public class RoomService {
     }
 
     public void delete() {
-        System.out.println("Enter room Id: ");
+        System.out.print("Enter room Id : ");
         Long roomId = scanner.nextLong();
         scanner.nextLine();
         roomRepository.delete(roomId);

@@ -31,21 +31,21 @@ public class ReservationService {
 
     public void save() {
 
-        System.out.println("Enter reservation start date (yyyy/MM/dd):");
+        System.out.print("Enter reservation start date (yyyy/MM/dd) : ");
         String startDate = scanner.nextLine();
         LocalDate startDateParse = DateFormat.parseDate(startDate);
 
-        System.out.println("Enter reservation end date (yyyy/MM/dd):");
+        System.out.print("Enter reservation end date (yyyy/MM/dd) : ");
         String endDate = scanner.nextLine();
         LocalDate endDateParse = DateFormat.parseDate(endDate);
 
-        System.out.println("Enter reservation Room Id:");
+        System.out.print("Enter reservation Room Id : ");
         Long roomIdToLong = Long.parseLong(scanner.nextLine());
 
-        System.out.println("Enter Client Id:");
+        System.out.print("Enter Client Id : ");
         Long clientIdToLong = Long.parseLong(scanner.nextLine());
 
-        System.out.println("Enter reservation Status:");
+        System.out.print("Enter reservation Status : ");
         ReservationStatus reservationStatus = ReservationStatus.valueOf(scanner.nextLine().toUpperCase());
 
         Optional<Room> fetchedRoom = null;
@@ -69,7 +69,7 @@ public class ReservationService {
     }
 
     public void update() {
-        System.out.println("Enter reservation Id to update");
+        System.out.print("Enter reservation Id to update : ");
         String reservationId = scanner.nextLine();
         Long reservationIdToLong = Long.parseLong(reservationId);
         Optional<Reservation> fetchedReservation = reservationRepository.findById(Long.parseLong(reservationId));
@@ -77,21 +77,21 @@ public class ReservationService {
             throw new ReservationNotFoundException("Reservation Not Found ! ");
         }
 
-        System.out.println("Enter reservation start date (yyyy/MM/dd):");
+        System.out.print("Enter reservation start date (yyyy/MM/dd) : ");
         String startDate = scanner.nextLine();
         LocalDate startDateParse = DateFormat.parseDate(startDate);
         if (startDate.isEmpty() || startDateParse.isBefore(LocalDate.now())) {
             System.out.println("Enter a valid start date (yyyy/MM/dd):");
         }
 
-        System.out.println("Enter reservation end date (yyyy/MM/dd):");
+        System.out.print("Enter reservation end date (yyyy/MM/dd) : ");
         String endDate = scanner.nextLine();
         LocalDate endDateParse = DateFormat.parseDate(endDate);
         if (endDate.isEmpty() || endDateParse.isBefore(LocalDate.now())) {
             System.out.println("Enter a valid end date (yyyy/MM/dd):");
         }
 
-        System.out.println("Enter reservation Room Id:");
+        System.out.print("Enter reservation Room Id : ");
         Long roomIdToLong = Long.parseLong(scanner.nextLine());
         Optional<Room> fetchedRoom = null;
         try {
@@ -100,7 +100,7 @@ public class ReservationService {
             System.out.println(roomNotFoundException.getMessage());
         }
 
-        System.out.println("Enter reservation client Id:");
+        System.out.print("Enter reservation client Id : ");
         Long clientIdToLong = Long.parseLong(scanner.nextLine());
         Optional<Client> fetchedClient = null;
         try {
@@ -109,7 +109,7 @@ public class ReservationService {
             System.out.println(clientNotFoundException.getMessage());
         }
 
-        System.out.println("Enter reservation Status:");
+        System.out.print("Enter reservation Status : ");
         String status = scanner.nextLine().toUpperCase();
         ReservationStatus reservationStatus = ReservationStatus.valueOf(status);
 
@@ -125,7 +125,7 @@ public class ReservationService {
     }
 
     public void delete() {
-        System.out.println("Enter the reservation ID to delete:");
+        System.out.print("Enter the reservation ID to delete : ");
         Long reservationId = Long.parseLong(scanner.nextLine());
 
         Optional<Reservation> reservation = reservationRepository.findById(reservationId);
